@@ -243,8 +243,10 @@ function normConfig(c){const d=defConfig();c=c&&typeof c==='object'?c:{};return{
 function normData(x){const d=defData();x=x&&typeof x==='object'?x:{};return{...d,...x,days:x.days&&typeof x.days==='object'?x.days:{},planOff:x.planOff||{},names:x.names||{},
   expenses:Array.isArray(x.expenses)?x.expenses:[],recLast:x.recLast||{},redeemed:Array.isArray(x.redeemed)?x.redeemed:[],seen:Array.isArray(x.seen)?x.seen:[]};}
 let storageOk=true;
+const cloud={gate:null,user:null,ready:false,adopted:false,status:'off',at:null,err:'',hashes:{},fb:null,db:null,auth:null,unsub:null,timer:null,inflight:0,pendingSnap:null,leaving:false};
 function load(){try{localStorage.setItem(KEY+'-t','1');localStorage.removeItem(KEY+'-t');const r=localStorage.getItem(KEY);const o=r?JSON.parse(r):{};return{config:normConfig(o.config),data:normData(o.data)};}catch(e){storageOk=false;return{config:normConfig(),data:normData()};}}
-function save(){S.config.habits.forEach(h=>{S.data.names[h.id]={n:h.name,t:h.type,f:h.freq.kind};});try{localStorage.setItem(KEY,JSON.stringify(S));storageOk=true;}catch(e){storageOk=false;}}
+function save(){S.config.habits.forEach(h=>{S.data.names[h.id]={n:h.name,t:h.type,f:h.freq.kind};});localSave();cloudQueue();}
+function localSave(){if(cloud.leaving)return;try{localStorage.setItem(KEY,JSON.stringify(S));storageOk=true;}catch(e){storageOk=false;}}
 let S=load();
 const C=()=>S.config,DT=()=>S.data;
 function ensurePlaceholders(){const ids=new Set(C().habits.map(h=>h.id));const used=new Set();Object.values(DT().days).forEach(d=>d&&d.h&&Object.keys(d.h).forEach(i=>used.add(i)));
@@ -515,7 +517,9 @@ function habitRow(hb,arch){const [col,soft]=COLORS[hb.color]||COLORS.green;
   '<div class="row" style="gap:4px"><button class="iconbtn light" style="width:40px;height:40px" data-a="hUp" data-id="'+hb.id+'" aria-label="Subir '+esc(hb.name)+'">'+ic('upA',18)+'</button><button class="iconbtn light" style="width:40px;height:40px" data-a="habitEdit" data-id="'+hb.id+'" aria-label="Editar '+esc(hb.name)+'">'+ic('pencil',18)+'</button></div>')+'</div>';}
 function viewAjustes(){
   const B=C().bonus,arch=C().habits.filter(h=>h.archived);
-  let h='<header class="hero"><h1>Ajustes</h1><span class="sub">Os dados ficam salvos neste navegador. Faça backup com frequência.</span></header><main class="main">';
+  let h='<header class="hero"><h1>Ajustes</h1><span class="sub">Seus dados ficam salvos na nuvem e também neste aparelho.</span></header><main class="main">';
+  h+='<section class="card"><span style="font-size:16px;font-weight:800">Sincronização</span><span class="small">Conta: '+esc(cloud.user&&cloud.user.email||'')+'</span><span id="syncInfo" style="font-weight:700">'+esc(syncText())+'</span>'+
+    '<div class="row"><button class="btn soft" style="flex:1" data-a="syncNow">Sincronizar agora</button><button class="btn ghost" style="flex:1" data-a="logout">Sair deste aparelho</button></div></section>';
   h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Minha rotina</h2><span class="meta">'+active().length+' hábitos</span></div><div class="card tight">'+(active().length?active().map(x=>habitRow(x)).join(''):'<div class="empty">Nenhum hábito ainda.</div>')+'</div>'+
     '<div class="row"><button class="btn green" style="flex:1" data-a="habitNew">'+ic('plus')+'Novo hábito</button><button class="btn ghost" style="flex:1" data-a="suggestOpen">Ver sugestões</button></div>';
   if(arch.length)h+='<details class="card"><summary>Arquivados ('+arch.length+')'+ic('right',18)+'</summary><div class="col" style="gap:0">'+arch.map(x=>habitRow(x,true)).join('')+'</div></details>';
@@ -608,10 +612,106 @@ function sheetHtml(){const s=ui.sheet;if(!s)return'';let b='';
   return'<div class="backdrop" data-a="backdrop"><div class="sheet" role="dialog" aria-modal="true">'+b+'</div></div>';}
 function convTxt(){const v=parseMoney(ui.wish.price);return isFinite(v)&&v>0?'Vale '+num(v*C().rate)+' pontos':'Digite o preço para ver em pontos';}
 
+/* ================= nuvem (Firebase) ================= */
+const FB_CONFIG={apiKey:"AIzaSyCHNY07Ikw5dQD9Qh6DjOIebpDOwmWgfDc",authDomain:"minha-rotina-26c3f.firebaseapp.com",projectId:"minha-rotina-26c3f",storageBucket:"minha-rotina-26c3f.firebasestorage.app",messagingSenderId:"844555212841",appId:"1:844555212841:web:493d97eeaca228138be438"};
+const FB_V='10.14.1';
+const SYNC_KEY=KEY+'-sync';
+function hashStr(s){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(h2>>>0).toString(36)+(h1>>>0).toString(36)+':'+s.length;}
+/* Divide o estado em documentos: config, core (dados gerais) e um por mês (dias + gastos). */
+function splitDocs(st){const o={config:JSON.stringify(st.config)};const d=st.data,core={};Object.keys(d).forEach(k=>{if(k!=='days'&&k!=='expenses')core[k]=d[k];});o.core=JSON.stringify(core);
+  const m={},g=k=>m[k]||(m[k]={days:{},exp:[]}),mk=s=>typeof s==='string'&&/^\d{4}-\d{2}/.test(s)?s.slice(0,7):'0000-00';
+  Object.keys(d.days||{}).sort().forEach(k=>{g(mk(k)).days[k]=d.days[k];});(d.expenses||[]).forEach(e=>{g(mk(e&&e.date)).exp.push(e);});
+  Object.keys(m).forEach(k=>{o['m-'+k]=JSON.stringify(m[k]);});return o;}
+function joinDocs(map){const P=s=>{try{return s?JSON.parse(s):{};}catch(e){return{};}};const core=P(map.core),days={},expenses=[];
+  Object.keys(map).filter(k=>k.startsWith('m-')).sort().forEach(k=>{const x=P(map[k]);Object.assign(days,x.days||{});if(Array.isArray(x.exp))expenses.push(...x.exp);});
+  return{config:normConfig(P(map.config)),data:normData({...core,days,expenses})};}
+function readSync(){try{return JSON.parse(localStorage.getItem(SYNC_KEY)||'null');}catch(e){return null;}}
+function writeSync(){if(cloud.leaving||!cloud.user)return;try{localStorage.setItem(SYNC_KEY,JSON.stringify({uid:cloud.user.uid,email:cloud.user.email||'',h:cloud.hashes}));}catch(e){}}
+function hhmm(t){const d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes());}
+function syncText(){const s=cloud.status;if(s==='ok')return'Tudo sincronizado'+(cloud.at?' (às '+hhmm(cloud.at)+')':'');if(s==='syncing')return'Enviando alterações…';
+  if(s==='offline')return'Sem internet. As alterações ficam guardadas aqui e sobem quando a conexão voltar.';if(s==='error')return'Erro ao sincronizar: '+cloud.err;return'Conectando…';}
+function setStatus(s){cloud.status=s;const el=document.getElementById('syncInfo');if(el)el.textContent=syncText();}
+function cloudBusy(){const a=document.activeElement;return!!(ui.sheet||ui.edit||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)));}
+function cloudQueue(){if(!cloud.ready||cloud.leaving)return;clearTimeout(cloud.timer);cloud.timer=setTimeout(cloudPush,1200);}
+async function cloudPush(){clearTimeout(cloud.timer);cloud.timer=null;if(!cloud.ready||!cloud.db||cloud.leaving)return 0;
+  const f=cloud.fb,docs=splitDocs(S),nh={},ops=[];
+  Object.keys(docs).forEach(id=>{nh[id]=hashStr(docs[id]);if(nh[id]!==cloud.hashes[id])ops.push(['set',id,docs[id]]);});
+  Object.keys(cloud.hashes).forEach(id=>{if(!(id in docs))ops.push(['del',id]);});
+  if(!ops.length)return 0;
+  cloud.hashes=nh;writeSync();cloud.inflight++;setStatus(navigator.onLine?'syncing':'offline');
+  try{for(let i=0;i<ops.length;i+=400){const b=f.writeBatch(cloud.db);ops.slice(i,i+400).forEach(([o,id,s])=>{const r=f.doc(cloud.db,'users',cloud.user.uid,'st',id);if(o==='set')b.set(r,{j:s,at:f.serverTimestamp()});else b.delete(r);});await b.commit();}
+    cloud.inflight--;cloud.at=Date.now();if(!cloud.inflight&&!cloud.timer)setStatus('ok');}
+  catch(e){cloud.inflight--;cloudFail(e);}
+  return ops.length;}
+function cloudFail(e){const c=e&&e.code||'';if(c==='permission-denied'){cloud.ready=false;if(cloud.unsub){cloud.unsub();cloud.unsub=null;}cloud.gate='denied';render();return;}
+  cloud.err=c||(e&&e.message)||'desconhecido';setStatus(navigator.onLine?'error':'offline');}
+function applyMap(map){S=joinDocs(map);localSave();if(ui.sel>todayKey())ui.sel=todayKey();applyTheme();
+  if(!C().setupDone){ui.tab='setup';ui.step=ui.step||1;}else if(ui.tab==='setup')ui.tab='hoje';}
+function mergeRemote(m){if(cloudBusy()){cloud.pendingSnap=m;return;}
+  const local=splitDocs(S),ids=new Set([...Object.keys(m),...Object.keys(local),...Object.keys(cloud.hashes)]),merged={};let changed=false;
+  ids.forEach(id=>{const lh=local[id]!==undefined?hashStr(local[id]):undefined;const v=lh!==cloud.hashes[id]?local[id]:m[id];if(v!==undefined)merged[id]=v;if(v!==local[id])changed=true;});
+  const rh={};Object.keys(m).forEach(id=>{rh[id]=hashStr(m[id]);});cloud.hashes=rh;writeSync();
+  if(changed){applyMap(merged);render();}
+  cloudQueue();}
+function onSnap(snap){if(cloud.leaving||snap.metadata.hasPendingWrites||snap.metadata.fromCache)return;
+  const m={};snap.forEach(d=>{const x=d.data();if(x&&typeof x.j==='string')m[d.id]=x.j;});
+  if(!cloud.adopted){
+    if(Object.keys(m).length){applyMap(m);const rh={};Object.keys(m).forEach(id=>{rh[id]=hashStr(m[id]);});cloud.hashes=rh;}else cloud.hashes={};
+    cloud.adopted=true;cloud.ready=true;writeSync();cloud.gate=null;render();cloudQueue();}
+  else mergeRemote(m);
+  cloud.at=Date.now();if(!cloud.inflight&&!cloud.timer)setStatus('ok');}
+function onUser(u){const f=cloud.fb;if(cloud.unsub){cloud.unsub();cloud.unsub=null;}cloud.ready=false;cloud.user=u;cloud.pendingSnap=null;
+  if(!u){cloud.gate='login';render();return;}
+  const mk=readSync();
+  if(mk&&mk.uid===u.uid){cloud.hashes=mk.h||{};cloud.adopted=true;cloud.ready=true;if(cloud.gate){cloud.gate=null;render();}setStatus(navigator.onLine?'syncing':'offline');cloudQueue();}
+  else{if(mk){S={config:normConfig(),data:normData()};localSave();}cloud.hashes={};cloud.adopted=false;cloud.gate='first';render();}
+  cloud.unsub=f.onSnapshot(f.collection(cloud.db,'users',u.uid,'st'),{includeMetadataChanges:true},onSnap,cloudFail);}
+function authMsg(e){const c=e&&e.code||'';
+  if(c==='auth/unauthorized-domain')return'Este endereço ainda não foi autorizado no Firebase (Authentication > Configurações > Domínios autorizados).';
+  if(c==='auth/network-request-failed')return'Sem internet. Conecte-se e tente de novo.';
+  return'Não foi possível entrar ('+(c||'erro desconhecido')+').';}
+async function cloudBoot(){const mk=readSync(),hadLocal=!!(mk&&mk.uid);
+  cloud.gate=hadLocal?null:'loading';render();
+  let f;const base='https://www.gstatic.com/firebasejs/'+FB_V+'/';
+  try{const r=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-firestore.js')]);f=Object.assign({},r[0],r[1],r[2]);}
+  catch(e){if(hadLocal)setStatus('offline');else{cloud.gate='nonet';render();}window.addEventListener('online',()=>location.reload(),{once:true});return;}
+  cloud.fb=f;const app=f.initializeApp(FB_CONFIG);cloud.auth=f.getAuth(app);
+  try{cloud.db=f.initializeFirestore(app,{localCache:f.persistentLocalCache({tabManager:f.persistentMultipleTabManager()})});}catch(e){cloud.db=f.getFirestore(app);}
+  f.getRedirectResult(cloud.auth).catch(e=>{cloud.err=authMsg(e);if(cloud.gate==='login')render();});
+  f.onAuthStateChanged(cloud.auth,onUser);}
+async function cloudLogin(){const f=cloud.fb;if(!f){location.reload();return;}const p=new f.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});cloud.err='';
+  try{await f.signInWithPopup(cloud.auth,p);}
+  catch(e){const c=e&&e.code||'';
+    if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'){try{await f.signInWithRedirect(cloud.auth,p);return;}catch(e2){cloud.err=authMsg(e2);}}
+    else if(c!=='auth/popup-closed-by-user'&&c!=='auth/cancelled-popup-request')cloud.err=authMsg(e);
+    render();}}
+async function cloudLogout(){cloud.leaving=true;clearTimeout(cloud.timer);const f=cloud.fb;
+  try{if(cloud.unsub)cloud.unsub();}catch(e){}
+  try{if(f)await f.signOut(cloud.auth);}catch(e){}
+  try{localStorage.removeItem(KEY);localStorage.removeItem(SYNC_KEY);}catch(e){}
+  try{if(f){await f.terminate(cloud.db);await f.clearIndexedDbPersistence(cloud.db);}}catch(e){}
+  location.reload();}
+function viewGate(){const g=cloud.gate;
+  const sub={login:'Seus hábitos, histórico e gastos ficam na sua conta e aparecem em qualquer aparelho.',denied:'Esta conta não tem acesso.',nonet:'Sem conexão com a internet.'}[g]||'Carregando…';
+  let h='<header class="hero"><h1 style="font-size:34px">Minha Rotina</h1><span class="sub" style="font-size:15px">'+sub+'</span></header><main class="main"><section class="card">';
+  if(g==='login')h+='<span style="font-size:17px;font-weight:800">Entre para continuar</span><span class="small">Use a sua conta Google. Só ela tem acesso aos dados.</span>'+
+    (cloud.err?'<span class="small" style="color:var(--red)">'+esc(cloud.err)+'</span>':'')+'<button class="btn green full" style="min-height:54px" data-a="login">Entrar com Google</button>';
+  else if(g==='denied')h+='<span style="font-size:17px;font-weight:800">Acesso não autorizado</span><span class="small">'+esc(cloud.user&&cloud.user.email||'Esta conta')+' não pode abrir este app.</span><button class="btn ghost full" data-a="logoutNow">Entrar com outra conta</button>';
+  else if(g==='nonet')h+='<span style="font-size:17px;font-weight:800">Sem internet</span><span class="small">No primeiro acesso deste aparelho é preciso estar conectado. Depois o app funciona também sem internet.</span><button class="btn green full" data-a="reload">Tentar de novo</button>';
+  else if(g==='first')h+='<span style="font-size:17px;font-weight:800">Buscando sua rotina na nuvem…</span><span class="small">'+esc(cloud.user&&cloud.user.email||'')+'</span><span class="small">No primeiro acesso deste aparelho é preciso estar conectado à internet.</span><button class="btn ghost full" data-a="logoutNow">Usar outra conta</button>';
+  else h+='<span class="small">Carregando…</span>';
+  return h+'</section></main>';}
+setInterval(()=>{if(cloud.pendingSnap&&!cloudBusy()){const m=cloud.pendingSnap;cloud.pendingSnap=null;mergeRemote(m);}},1500);
+window.addEventListener('offline',()=>{if(cloud.ready)setStatus('offline');});
+window.addEventListener('online',()=>{if(cloud.ready&&cloud.status==='offline')setStatus('syncing');});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&cloud.timer)cloudPush();});
+
 /* ================= render ================= */
 function tabs(){const t=[['hoje','Hoje','cal'],['resumo','Resumo','chart']];if(C().modules.premios)t.push(['premios','Prêmios','gift']);if(C().modules.gastos)t.push(['gastos','Gastos','wallet']);t.push(['ajustes','Ajustes','gear']);return t;}
 function render(){
   const app=document.getElementById('app');
+  if(cloud.gate){app.innerHTML=viewGate();return;}
   if(ui.tab==='premios'&&!C().modules.premios)ui.tab='hoje';if(ui.tab==='gastos'&&!C().modules.gastos)ui.tab='hoje';
   if(ui.tab==='setup'){app.innerHTML=viewSetup()+sheetHtml();return;}
   const c=compute();const t=tabs();
@@ -655,7 +755,7 @@ function tryRestore(txt){
   const cf=o.config?normConfig(o.config):null,dt=o.data?normData(o.data):null;
   const pl=(n,a,b)=>n+' '+(n===1?a:b);const parts=[];if(cf)parts.push(pl(cf.habits.filter(h=>!h.archived).length,'hábito','hábitos')+', '+pl(cf.plans.length,'plano','planos')+' e '+pl(cf.wishes.length,'desejo','desejos'));if(dt)parts.push(pl(Object.keys(dt.days).length,'dia registrado','dias registrados')+' e '+pl(dt.expenses.length,'gasto','gastos'));
   const title={full:'Restaurar backup completo?',config:'Usar esta rotina?',data:'Restaurar estes dados?'}[o.kind];
-  const text='O arquivo tem '+parts.join(' e ')+'. '+({full:'Tudo neste aparelho será substituído.',config:'Sua rotina atual será substituída. Seu histórico continua, e hábitos que saírem ficam arquivados.',data:'Seu histórico atual será substituído. A rotina continua a mesma.'}[o.kind]);
+  const text='O arquivo tem '+parts.join(' e ')+'. '+({full:'Tudo o que está salvo hoje será substituído, inclusive na nuvem.',config:'Sua rotina atual será substituída. Seu histórico continua, e hábitos que saírem ficam arquivados.',data:'Seu histórico atual será substituído. A rotina continua a mesma.'}[o.kind]);
   ask(title,text,o.kind==='config'?'Usar rotina':'Restaurar',()=>{if(cf){cf.setupDone=true;S.config=cf;}if(dt)S.data=dt;ensurePlaceholders();save();applyTheme();ui.sel=todayKey();ui.tab='hoje';setTimeout(()=>toast(o.kind==='config'?'Rotina importada':'Backup restaurado'),200);},false,true);
 }
 
@@ -669,6 +769,11 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,v=t.dataset.v,id=t.dataset.id,T=todayKey();
   if(a==='backdrop'){if(e.target===t){ui.sheet=null;render();}return;}
   switch(a){
+    case'login':cloudLogin();break;
+    case'reload':location.reload();break;
+    case'logoutNow':cloudLogout();break;
+    case'logout':ask('Sair deste aparelho?',(cloud.status==='ok'?'':'Ainda há alterações que não subiram para a nuvem e elas serão perdidas. ')+'Seus dados continuam na nuvem, mas a cópia deste aparelho será apagada. Use isto em aparelhos de outras pessoas.','Sair',()=>{cloudLogout();},true,true);break;
+    case'syncNow':if(!cloud.ready){toast('Ainda conectando…');break;}cloudPush().then(n=>{if(!n)toast(navigator.onLine?'Tudo sincronizado':'Sem internet');});break;
     case'tab':ui.tab=v;ui.sheet=null;render();try{window.scrollTo(0,0);}catch(_){}break;
     case'step':ui.step=+v;render();try{window.scrollTo(0,0);}catch(_){}break;
     case'pick':ui.pick.has(v)?ui.pick.delete(v):ui.pick.add(v);render();break;
@@ -761,7 +866,7 @@ document.addEventListener('click',e=>{
     case'catAdd':{const inp=document.getElementById('newCat');const n=(inp&&inp.value||'').trim();if(!n)break;if(C().categories.includes(n)){toast('Essa categoria já existe');break;}C().categories.push(n);save();render();break;}
     case'catDel':if(C().categories.length>1){C().categories=C().categories.filter(x=>x!==v);if(ui.draft.cat===v)ui.draft.cat=null;save();render();}break;
     case'theme':C().theme=v;save();applyTheme();render();break;
-    case'resetAll':ask('Apagar tudo?','Rotina, histórico, pontos, prêmios e gastos deste aparelho serão apagados. Faça um backup antes, se quiser guardar.','Apagar tudo',()=>{S={config:normConfig(),data:normData()};ui.sel=todayKey();ui.tab='setup';ui.step=1;applyTheme();},true,true);break;
+    case'resetAll':ask('Apagar tudo?','Rotina, histórico, pontos, prêmios e gastos serão apagados deste aparelho e da nuvem. Faça um backup antes, se quiser guardar.','Apagar tudo',()=>{S={config:normConfig(),data:normData()};ui.sel=todayKey();ui.tab='setup';ui.step=1;applyTheme();},true,true);break;
   }
 });
 document.addEventListener('input',e=>{const t=e.target;
@@ -780,7 +885,7 @@ document.addEventListener('change',e=>{const t=e.target;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.sheet){ui.sheet=null;render();}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(ui.sel>todayKey())ui.sel=todayKey();render();}});
 let lastDay=todayKey();setInterval(()=>{const t=todayKey();if(t!==lastDay){if(ui.sel===lastDay)ui.sel=t;lastDay=t;render();}},30000);
-save();applyTheme();render();
+applyTheme();cloudBoot();
 })();
 
 </script>
