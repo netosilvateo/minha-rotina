@@ -6,32 +6,32 @@
 <title>Minha Rotina</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F2F4F8;--surface:#FFFFFF;--ink:#13203B;--muted:#5A6478;--line:#E3E7EF;--soft:#EEF1F6;
-  --hero:#13203B;--hero2:#24345A;--heroMuted:#B7C1D6;--onAccent:#FFFFFF;
+  --bg:#F4F5FB;--surface:#FFFFFF;--ink:#151A33;--muted:#5B6280;--line:#E7E9F3;--soft:#EEF0F8;
+  --hero:#1B1F4B;--hero2:rgba(255,255,255,.13);--heroMuted:#C5CAE8;--onAccent:#FFFFFF;
   --green:#0F8A5F;--greenSoft:#E1F4EC;--greenInk:#0B6B4A;
   --orange:#C9661A;--orangeSoft:#FDEBD8;--orangeInk:#9A4A08;
   --blue:#2F6FDB;--blueSoft:#E4EDFC;--blueInk:#1F55B3;
   --purple:#6B3FB0;--purpleSoft:#F1E9FB;--purpleLine:#D9CCEF;
   --red:#B42F28;--redSoft:#FBE6E4;--pink:#B8336A;--pinkSoft:#FBE4EE;--teal:#0E7C86;--tealSoft:#DDF2F3;
-  --display:Outfit,Manrope,"Segoe UI",system-ui,sans-serif;
-  --body:Manrope,"Segoe UI",system-ui,-apple-system,sans-serif;
+  --display:Sora,"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;
+  --body:"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,sans-serif;
   color-scheme:light;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0D1424;--surface:#172138;--ink:#EAF0FA;--muted:#A3AEC4;--line:#26314C;--soft:#222D48;
-  --hero:#1B2846;--hero2:#2A3A60;--heroMuted:#AEB9CF;--onAccent:#0D1424;
+  --bg:#0C1022;--surface:#161B33;--ink:#EBEEFA;--muted:#A5ADC9;--line:#252C4A;--soft:#1F2644;
+  --hero:#151B3E;--hero2:rgba(255,255,255,.11);--heroMuted:#B6BCDD;--onAccent:#0C1022;
   --green:#3CC98A;--greenSoft:#16382B;--greenInk:#86E3B8;
   --orange:#F0A15C;--orangeSoft:#3B2914;--orangeInk:#F6BE89;
   --blue:#78A5F2;--blueSoft:#1A2B4C;--blueInk:#A8C5F7;
   --purple:#B18CF0;--purpleSoft:#2A2246;--purpleLine:#4B3C78;
   --red:#F08A82;--redSoft:#3E1E1C;--pink:#F08FB8;--pinkSoft:#3D1D2C;--teal:#5CC8D0;--tealSoft:#14363A;color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --bg:#0D1424;--surface:#172138;--ink:#EAF0FA;--muted:#A3AEC4;--line:#26314C;--soft:#222D48;
-  --hero:#1B2846;--hero2:#2A3A60;--heroMuted:#AEB9CF;--onAccent:#0D1424;
+  --bg:#0C1022;--surface:#161B33;--ink:#EBEEFA;--muted:#A5ADC9;--line:#252C4A;--soft:#1F2644;
+  --hero:#151B3E;--hero2:rgba(255,255,255,.11);--heroMuted:#B6BCDD;--onAccent:#0C1022;
   --green:#3CC98A;--greenSoft:#16382B;--greenInk:#86E3B8;
   --orange:#F0A15C;--orangeSoft:#3B2914;--orangeInk:#F6BE89;
   --blue:#78A5F2;--blueSoft:#1A2B4C;--blueInk:#A8C5F7;
@@ -157,6 +157,92 @@ details summary::-webkit-details-marker{display:none}
 .lg{width:12px;height:12px;border-radius:3px;display:inline-block}
 .chipbtn svg{margin-right:4px;vertical-align:-3px}
 button.card{font:inherit;color:inherit;width:100%}
+
+/* ===== visual v3 ===== */
+:root{--heroA:#1B1F4B;--heroB:#3B3A9E;--shadow:0 1px 2px rgba(21,26,51,.05),0 12px 32px -16px rgba(21,26,51,.22)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--heroA:#151B3E;--heroB:#2A2C73;--shadow:0 1px 0 rgba(255,255,255,.03),0 16px 32px -18px rgba(0,0,0,.65)}}
+:root[data-theme="dark"]{--heroA:#151B3E;--heroB:#2A2C73;--shadow:0 1px 0 rgba(255,255,255,.03),0 16px 32px -18px rgba(0,0,0,.65)}
+html{scroll-behavior:smooth}
+body{background-image:radial-gradient(900px 420px at 85% -140px,rgba(99,102,241,.10),transparent 70%);background-repeat:no-repeat}
+.hero{background:linear-gradient(135deg,var(--heroA),var(--heroB));position:relative;overflow:hidden;isolation:isolate;box-shadow:0 22px 40px -28px rgba(27,31,75,.8)}
+.hero::before,.hero::after{content:"";position:absolute;z-index:-1;border-radius:50%;pointer-events:none}
+.hero::before{width:300px;height:300px;right:-90px;top:-140px;background:radial-gradient(circle,rgba(129,140,248,.5),transparent 68%)}
+.hero::after{width:240px;height:240px;left:-100px;bottom:-130px;background:radial-gradient(circle,rgba(61,214,140,.22),transparent 68%)}
+.hero h1{letter-spacing:-.02em}
+.bigstat{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.05}
+.card,.wcard{box-shadow:var(--shadow)}
+.card{border-radius:24px}
+.tile{border-radius:14px}
+.btn{border-radius:16px;transition:transform .12s ease,filter .15s ease}
+.btn:active{transform:scale(.98)}
+.check.on{box-shadow:0 8px 16px -8px var(--green)}
+.hrow{transition:background .15s ease}
+.chipbtn{transition:background .15s,border-color .15s,color .15s}
+.fullrow{width:100%}
+.mgrid,.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.fullrow .grid2{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.mcard{gap:12px}
+.poster{width:48px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.starbtn{width:52px;height:52px;border:none;background:var(--soft);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.starbtn:active{transform:scale(.92)}
+.brand{display:none}
+.mlist{order:1}.mform{order:2}
+nav.tabs button{border-radius:14px;transition:background .15s,color .15s}
+nav.tabs button[aria-current="page"]{color:var(--ink);background:var(--soft)}
+nav.tabs button[aria-current="page"] svg{color:var(--green)}
+@supports (background:color-mix(in srgb,red,blue)){
+  nav.tabs{background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px)}
+}
+@media (hover:hover){
+  .chipbtn:hover{border-color:var(--ink)}
+  .btn:hover{filter:brightness(1.06)}
+  .hrow:hover{background:var(--soft);border-radius:14px}
+  nav.tabs button:hover{background:var(--soft)}
+}
+.wrap.solo>.hero,.wrap.solo>.main{max-width:640px;margin-left:auto;margin-right:auto}
+
+/* tablet */
+@media (min-width:600px) and (max-width:899px){
+  .wrap{max-width:640px}
+  nav.tabs .in{max-width:640px}
+}
+
+/* computador */
+@media (min-width:900px){
+  body{font-size:16px}
+  .wrap{max-width:none;padding-bottom:56px}
+  .wrap.hasnav{padding-left:264px}
+  .wrap.hasnav>.hero,.wrap.hasnav>.main{width:calc(100% - 64px);max-width:1120px;margin-left:auto;margin-right:auto}
+  .wrap.solo{padding-bottom:56px}
+  .wrap.solo>.hero{margin-top:40px;border-radius:32px;padding:32px 36px}
+  .wrap.solo>.main{display:flex;padding-top:24px}
+  .wrap.hasnav>.hero{margin-top:28px;border-radius:32px;padding:32px 36px;gap:24px}
+  .hero h1{font-size:38px}
+  .ringbox{width:156px;height:156px}
+  .ringbox svg{width:156px;height:156px}
+  .ringbox .n{font-size:42px}
+  .wrap.hasnav>.main{padding:28px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+  .main>.banner,.main>.dashed,.main>.btn,.main>p,.main>details,.main>.empty,.main>.fullrow{grid-column:1/-1}
+  .main>button.banner{grid-column:1/-1}
+  .bars{height:200px}
+  .mlist,.mform{order:0}
+  .badges{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+  .mgrid,.cgrid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .bigstat{font-size:52px}
+
+  nav.tabs{top:0;right:auto;width:248px;border-top:none;border-right:1px solid var(--line);padding:28px 16px;display:flex;flex-direction:column;background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none}
+  nav.tabs .brand{display:flex;align-items:center;gap:12px;padding:2px 10px 26px;font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em}
+  nav.tabs .brand i{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--heroA),var(--heroB));display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal}
+  nav.tabs .in{display:flex!important;flex-direction:column;gap:4px;max-width:none;margin:0}
+  nav.tabs button{flex-direction:row;justify-content:flex-start;gap:14px;font-size:15px;padding:0 16px;min-height:50px}
+
+  .backdrop{align-items:center;padding:24px}
+  .sheet{max-width:560px;border-radius:28px;padding-bottom:22px}
+  #toast{bottom:32px;left:calc(50% + 132px)}
+}
+@media (min-width:900px) and (hover:hover){
+  .card:hover{transform:translateY(-1px);transition:transform .2s ease}
+}
 </style>
 </head>
 <body>
@@ -197,6 +283,7 @@ const COLORS={green:['var(--green)','var(--greenSoft)'],blue:['var(--blue)','var
 const TYPES=[['check','Feito / não feito'],['qty','Quantidade'],['time','Tempo'],['plan','Plano de leitura']];
 const DEFAULT_CATS=['Mercado','Alimentação','Transporte','Casa','Contas e assinaturas','Saúde','Educação','Lazer','Roupas e cuidados pessoais','Doações','Outros'];
 const WISH_CATS=['Brinquedo e coleção','Roupa','Ferramenta','Casa','Tecnologia','Experiência','Outro'];
+const MOVIE_GENRES=['Ação','Aventura','Comédia','Drama','Terror','Ficção científica','Animação','Romance','Suspense','Fantasia','Documentário','Outro'];
 const D=(o)=>Object.assign({type:'check',color:'green',freq:{kind:'daily',days:[0,1,2,3,4],times:3},pts:10,extraPts:5,goal:2000,unit:'ml',steps:[250,500],minutes:15,options:''},o);
 const SUGGEST=[
   ['Saúde',[
@@ -234,12 +321,12 @@ const SUGGEST=[
 const KEY='minha-rotina-v2';
 function defConfig(){return{name:'',setupDone:false,habits:[],plans:[],
   bonus:{dia100:20,meta:25,semana:100,seq7:50,seq30:200,grupo:30},
-  rate:20,justLimit:3,modules:{premios:true,gastos:true},categories:DEFAULT_CATS.slice(),recurring:[],wishes:[],theme:'auto'};}
+  rate:20,justLimit:3,modules:{premios:true,gastos:true,filmes:true},categories:DEFAULT_CATS.slice(),recurring:[],wishes:[],movies:[],theme:'auto'};}
 function defData(){return{start:todayKey(),days:{},planOff:{},names:{},expenses:[],recLast:{},redeemed:[],seen:[],lastBackup:null};}
 function normHabit(h){const d=D({});h=Object.assign({},d,h||{});h.freq=Object.assign({},d.freq,h.freq||{});if(!Array.isArray(h.freq.days))h.freq.days=[0,1,2,3,4];if(!Array.isArray(h.steps)||h.steps.length<2)h.steps=[250,500];if(!h.id)h.id=uid();h.archived=!!h.archived;if(h.type==='plan'||h.type==='qty'){if(h.freq.kind==='weekly')h.freq.kind='daily';}return h;}
 function normConfig(c){const d=defConfig();c=c&&typeof c==='object'?c:{};return{...d,...c,habits:(Array.isArray(c.habits)?c.habits:[]).map(normHabit),plans:Array.isArray(c.plans)?c.plans.filter(p=>p&&Array.isArray(p.items)):[],
   bonus:{...d.bonus,...(c.bonus||{})},modules:{...d.modules,...(c.modules||{})},categories:Array.isArray(c.categories)&&c.categories.length?c.categories:d.categories,
-  recurring:Array.isArray(c.recurring)?c.recurring:[],wishes:Array.isArray(c.wishes)?c.wishes:[]};}
+  recurring:Array.isArray(c.recurring)?c.recurring:[],wishes:Array.isArray(c.wishes)?c.wishes:[],movies:Array.isArray(c.movies)?c.movies:[]};}
 function normData(x){const d=defData();x=x&&typeof x==='object'?x:{};return{...d,...x,days:x.days&&typeof x.days==='object'?x.days:{},planOff:x.planOff||{},names:x.names||{},
   expenses:Array.isArray(x.expenses)?x.expenses:[],recLast:x.recLast||{},redeemed:Array.isArray(x.redeemed)?x.redeemed:[],seen:Array.isArray(x.seen)?x.seen:[]};}
 let storageOk=true;
@@ -329,14 +416,16 @@ const P_={
   down:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',up:'<path d="M12 20V9M7 14l5-5 5 5M5 4h14"/>',
   repeat:'<path d="M17 2l3 3-3 3M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3M20 13v2a4 4 0 0 1-4 4H4"/>',
   pencil:'<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/>',
-  layers:'<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>'};
+  layers:'<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>',
+  film:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>',
+  dice:'<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="9" cy="15" r="1.2"/><circle cx="15" cy="15" r="1.2"/>'};
 const ic=(n,s=22,sw=2)=>'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+sw+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+P_[n]+'</svg>';
 const STAR='<svg width="18" height="18" viewBox="0 0 24 24" fill="#F5A04A" aria-hidden="true"><path d="'+P_.star.match(/d="([^"]+)"/)[1]+'"/></svg>';
 const FLAME='<svg width="20" height="20" viewBox="0 0 24 24" fill="#F5A04A" aria-hidden="true"><path d="'+P_.flame.match(/d="([^"]+)"/)[1]+'"/></svg>';
 const typeIcon=h=>h.type==='qty'?'drop':h.type==='time'?'timer':h.type==='plan'?'book':'check';
 
 /* ================= estado de interface ================= */
-const ui={tab:C().setupDone?'hoje':'setup',step:1,pick:new Set(),sel:todayKey(),rmode:'week',roff:0,moff:0,sheet:null,
+const ui={tab:C().setupDone?'hoje':'setup',step:1,pick:new Set(),sel:todayKey(),rmode:'week',roff:0,moff:0,sheet:null,mfilter:'todo',mv:{title:'',genre:MOVIE_GENRES[0],where:'',note:''},
   timer:{hid:null,open:false,running:false,remain:0,endAt:0,total:0},
   draft:{val:'',cat:null,desc:'',date:''},wish:{name:'',price:'',cat:WISH_CATS[0]},rec:{desc:'',val:'',cat:null,day:''},edit:null,planEdit:null,pending:null};
 let confirmFn=null,confirmNoPts=false;
@@ -398,7 +487,7 @@ function viewHoje(c){
   // semanais
   const wk=active().filter(isWeekly);
   if(wk.length){const ws=weekStart(k),wd=range(ws,addDays(ws,6));
-    h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Metas da semana</h2><span class="meta">Dias livres</span></div><div class="grid2">';
+    h+='<section class="col fullrow" style="gap:10px"><div class="sec-h"><h2>Metas da semana</h2><span class="meta">Dias livres</span></div><div class="grid2">';
     wk.forEach(hb=>{const cnt=wd.filter(x=>isDone(hb,val(x,hb))).length,g=+hb.freq.times||1,v=r.h[hb.id],on=isDone(hb,v),hit=cnt>=g;const col=hit?'var(--orange)':(COLORS[hb.color]||COLORS.green)[0];
       const sub=hit?(cnt>g?'Meta batida + '+(cnt-g)+' bônus':'Meta batida! Extra vale bônus'):'Falta'+(g-cnt>1?'m ':' ')+(g-cnt)+' nesta semana';
       const lab=on?'Feito'+(typeof v==='string'?' ('+esc(v)+')':isT?' hoje':''):(isT?'Fiz hoje':'Fiz neste dia');
@@ -427,7 +516,7 @@ function viewResumo(c){
     '<div class="seg" role="group" aria-label="Período"><button data-a="rMode" data-v="week" aria-pressed="'+(ui.rmode==='week')+'">Semana</button><button data-a="rMode" data-v="month" aria-pressed="'+(ui.rmode==='month')+'">Mês</button></div>'+
     '<div class="between"><div class="col" style="gap:0"><span class="sub">'+esc(per.label)+'</span><span style="font-family:var(--display);font-size:44px;font-weight:700;line-height:1.1">'+avg+'%</span><span class="sub">média dos dias</span></div>'+
     '<div class="col" style="gap:0;text-align:right"><span style="font-size:22px;font-weight:800">'+el.filter(k=>dayInfo(k).full).length+'</span><span class="sub">dias 100%</span></div></div></header><main class="main">';
-  h+='<section class="card"><div class="bars'+(ui.rmode==='month'?' month':'')+'" role="img" aria-label="Porcentagem por dia">';
+  h+='<section class="card fullrow"><div class="bars'+(ui.rmode==='month'?' month':'')+'" role="img" aria-label="Porcentagem por dia">';
   per.days.forEach((k,i)=>{const fut=k>T||k<start,r=dayRec(k),inf=fut?null:dayInfo(k),p=inf&&inf.pct!=null?inf.pct:0;const lab=ui.rmode==='week'?WD1[i]:((i+1)%5===0||i===0?String(i+1):'');
     const st=r.j?'height:100%;background:repeating-linear-gradient(45deg,var(--soft),var(--soft) 4px,var(--line) 4px,var(--line) 8px)':'height:'+Math.max(3,p)+'%;background:'+(p===100?'var(--orange)':fut?'var(--soft)':'var(--green)');
     h+='<div class="b"><i style="'+st+(k===T?';outline:2px solid var(--ink);outline-offset:1px':'')+'"></i><span>'+lab+'</span></div>';});
@@ -453,7 +542,7 @@ function viewResumo(c){
     h+='<section class="card"><div class="between"><span style="font-size:16px;font-weight:800">'+esc(x.p.name)+'</span><span class="pill" style="background:'+soft+';color:'+col+'">'+x.idx+' de '+x.p.items.length+'</span></div><div class="bar" style="background:'+soft+'"><i style="width:'+(x.idx/x.p.items.length*100)+'%;background:'+col+'"></i></div>'+
       (x.order.length?'<span class="small">Etapas concluídas: '+x.groupsDone.length+' de '+x.order.length+'</span>'+(x.groupsDone.length?'<div class="chips">'+x.groupsDone.map(g=>'<span class="pill" style="background:'+soft+';color:'+col+'">'+esc(g)+'</span>').join('')+'</div>':''):'')+'</section>';});
   const ach=achievements(c);
-  h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Conquistas</h2><span class="meta">'+ach.filter(a=>a.ok).length+' de '+ach.length+'</span></div><div class="badges">'+
+  h+='<section class="col fullrow" style="gap:10px"><div class="sec-h"><h2>Conquistas</h2><span class="meta">'+ach.filter(a=>a.ok).length+' de '+ach.length+'</span></div><div class="badges">'+
     ach.map(a=>'<div class="badge'+(a.ok?' on':'')+'"><span class="ic">'+ic(a.ic,24)+'</span><b>'+esc(a.n)+'</b><small>'+(a.ok?'Conquistada':a.p)+'</small></div>').join('')+'</div></section>';
   return h+'</main>';
 }
@@ -463,17 +552,17 @@ function viewPremios(c){
   let h='<header class="hero"><div class="between"><h1>Prêmios</h1><span class="pill" style="background:var(--hero2);color:#FFD8A8">Nível '+L.n+'</span></div>'+
     '<div class="col" style="gap:2px"><span class="sub">Seu saldo</span><span class="row" style="gap:8px"><span style="font-family:var(--display);font-size:48px;font-weight:700;line-height:1.05">'+num(c.saldo)+'</span><span style="font-size:18px;font-weight:800;color:#FFD8A8">pts</span></span></div>'+
     '<div class="col" style="gap:6px"><div class="bar" style="background:var(--hero2)"><i style="width:'+lp+'%;background:#F5A04A"></i></div><div class="between sub" style="font-size:13px"><span>Faltam '+num(L.next-c.earned)+' pts para o nível '+(L.n+1)+'</span><span>Total: '+num(c.earned)+'</span></div></div></header><main class="main">';
-  h+='<div class="card" style="flex-direction:row;align-items:center;justify-content:space-between"><div class="col" style="gap:0"><span style="font-weight:800">1 real = '+rate+' pontos</span><span class="small">Taxa usada na lista de desejos</span></div><button class="btn sm ghost" data-a="tab" data-v="ajustes">Ajustar</button></div>';
+  h+='<div class="card fullrow" style="flex-direction:row;align-items:center;justify-content:space-between"><div class="col" style="gap:0"><span style="font-weight:800">1 real = '+rate+' pontos</span><span class="small">Taxa usada na lista de desejos</span></div><button class="btn sm ghost" data-a="tab" data-v="ajustes">Ajustar</button></div>';
   h+='<button class="btn green full" style="min-height:54px" data-a="wishOpen">'+ic('plus')+'Adicionar desejo</button>';
   const items=C().wishes.map(w=>({...w,pts:Math.round(w.price*rate)})).sort((a,b)=>a.pts-b.pts);
-  h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Lista de desejos</h2><span class="meta">'+items.length+(items.length===1?' item':' itens')+'</span></div>';
+  h+='<section class="col fullrow" style="gap:10px"><div class="sec-h"><h2>Lista de desejos</h2><span class="meta">'+items.length+(items.length===1?' item':' itens')+'</span></div>';
   if(!items.length)h+='<div class="card empty">Adicione o que você quer conquistar. O app converte o preço em pontos e mostra quanto falta.</div>';
-  items.forEach(w=>{const ok=c.saldo>=w.pts,p=Math.min(100,Math.max(0,c.saldo)/w.pts*100);
+  h+='<div class="cgrid">';items.forEach(w=>{const ok=c.saldo>=w.pts,p=Math.min(100,Math.max(0,c.saldo)/w.pts*100);
     h+='<div class="card"><div class="between" style="align-items:flex-start"><div class="col" style="gap:6px;min-width:0"><span style="font-size:17px;font-weight:800;overflow-wrap:anywhere">'+esc(w.name)+'</span><span class="row" style="gap:8px;flex-wrap:wrap"><span class="pill gray">'+esc(w.cat)+'</span><span class="small">'+money(w.price)+'</span></span></div>'+
       '<button class="iconbtn light" data-a="wishDel" data-id="'+w.id+'" aria-label="Remover '+esc(w.name)+'">'+ic('trash',20)+'</button></div>'+
       '<div class="between"><span style="font-family:var(--display);font-size:22px;font-weight:700">'+num(w.pts)+' pts</span>'+(ok?'<span class="pill green">Pronto para resgatar</span>':'<span class="small">Faltam '+num(w.pts-c.saldo)+'</span>')+'</div>'+
       '<div class="bar"><i style="width:'+p+'%;background:'+(ok?'var(--green)':'var(--orange)')+'"></i></div>'+
-      (ok?'<button class="btn ink" data-a="redeem" data-id="'+w.id+'">Resgatar prêmio</button>':'<span class="small">No seu ritmo: '+eta(w.pts-c.saldo,c)+'</span>')+'</div>';});
+      (ok?'<button class="btn ink" data-a="redeem" data-id="'+w.id+'">Resgatar prêmio</button>':'<span class="small">No seu ritmo: '+eta(w.pts-c.saldo,c)+'</span>')+'</div>';});h+='</div>';
   h+='</section>';
   if(DT().redeemed.length)h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Já conquistados</h2><span class="meta">'+DT().redeemed.length+'</span></div><div class="card tight">'+
     DT().redeemed.slice().reverse().map(r=>'<div class="list-item"><span class="tile" style="background:var(--orangeSoft);color:var(--orange)">'+ic('trophy',20)+'</span><div class="col" style="flex:1;gap:0;min-width:0"><span style="font-weight:800;overflow-wrap:anywhere">'+esc(r.name)+'</span><span class="small">'+fmtShort(r.date)+' · '+money(r.price)+'</span></div><span style="font-weight:800">'+num(r.pts)+' pts</span></div>').join('')+'</div></section>';
@@ -503,11 +592,47 @@ function viewGastos(){
     '<button class="btn green full" style="min-height:54px" data-a="expSave">Salvar gasto</button></section>';
   if(ex.length){const by={};ex.forEach(e=>by[e.cat]=(by[e.cat]||0)+e.value);const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]),mx=arr[0][1];
     h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Por categoria</h2></div><div class="card tight" style="padding:6px 16px">'+arr.map(([ct,v])=>'<div class="statrow"><div class="between"><span style="font-weight:800">'+esc(ct)+'</span><span style="font-weight:800">'+money(v)+' <span class="small">'+Math.round(v/total*100)+'%</span></span></div><div class="bar"><i style="width:'+(v/mx*100)+'%;background:var(--blue)"></i></div></div>').join('')+'</div></section>';}
-  h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Lançamentos</h2><button class="btn sm ghost" data-a="recOpen">'+ic('repeat',18)+'Recorrentes ('+C().recurring.length+')</button></div>';
+  h+='<section class="col fullrow" style="gap:10px"><div class="sec-h"><h2>Lançamentos</h2><button class="btn sm ghost" data-a="recOpen">'+ic('repeat',18)+'Recorrentes ('+C().recurring.length+')</button></div>';
   if(!ex.length)h+='<div class="card empty">Nenhum gasto neste mês. Digite o valor acima e escolha a categoria.</div>';
   else{const g={};ex.forEach(e=>{(g[e.date]=g[e.date]||[]).push(e);});
     Object.keys(g).sort().reverse().forEach(dk=>{h+='<div class="datehead">'+(dk===T?'Hoje':dk===addDays(T,-1)?'Ontem':esc(fmtLong(dk)))+' · '+money(g[dk].reduce((a,e)=>a+e.value,0))+'</div><div class="card tight">'+
       g[dk].map(e=>'<div class="list-item"><div class="col" style="flex:1;gap:0;min-width:0"><span style="font-weight:800;overflow-wrap:anywhere">'+esc(e.desc||e.cat)+'</span><span class="small">'+esc(e.cat)+(e.rec?' · recorrente':'')+'</span></div><span style="font-weight:800">'+money(e.value)+'</span><button class="iconbtn light" style="width:40px;height:40px" data-a="expDel" data-id="'+e.id+'" aria-label="Apagar gasto">'+ic('x',18)+'</button></div>').join('')+'</div>';});}
+  return h+'</section></main>';
+}
+
+/* ---------- filmes ---------- */
+const STARPATH=P_.star.match(/d="([^"]+)"/)[1];
+const starSvg=(on,sz)=>'<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="'+(on?'#F5A04A':'none')+'" stroke="#F5A04A" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="'+STARPATH+'"/></svg>';
+const starRow=(n,sz)=>[1,2,3,4,5].map(i=>starSvg(i<=n,sz)).join('');
+const mvCol=g=>Object.keys(COLORS)[Math.max(0,MOVIE_GENRES.indexOf(g))%6];
+function viewFilmes(){
+  const L=C().movies,todo=L.filter(m=>!m.watched),seen=L.filter(m=>m.watched);
+  const yr=String(new Date().getFullYear()),seenYear=seen.filter(m=>(m.watchedAt||'').startsWith(yr)).length;
+  const f=ui.mfilter;
+  const list=f==='todo'?todo.slice().reverse():seen.slice().sort((a,b)=>(b.watchedAt||'').localeCompare(a.watchedAt||''));
+  let h='<header class="hero"><h1>Filmes</h1>'+
+    '<div class="between"><div class="col" style="gap:0"><span class="sub">Quero assistir</span><span class="bigstat">'+todo.length+'</span></div><div class="col" style="gap:0;text-align:right"><span class="sub">Vistos em '+yr+'</span><span class="bigstat">'+seenYear+'</span></div></div>'+
+    '<div class="seg" role="group" aria-label="Lista"><button data-a="mFilter" data-v="todo" aria-pressed="'+(f==='todo')+'">Quero assistir ('+todo.length+')</button><button data-a="mFilter" data-v="seen" aria-pressed="'+(f==='seen')+'">Já vi ('+seen.length+')</button></div></header><main class="main">';
+  const m=ui.mv;
+  h+='<section class="card mform" aria-label="Novo filme"><span style="font-size:16px;font-weight:800">Adicionar à lista</span>'+
+    '<div class="field"><label for="m-title">Nome do filme</label><input id="m-title" class="input" data-m="title" placeholder="Ex.: Interestelar" autocomplete="off" value="'+esc(m.title)+'"></div>'+
+    '<div class="field"><span class="flabel">Gênero</span><div class="chips">'+MOVIE_GENRES.map(g=>'<button class="chipbtn" data-a="mvGenre" data-v="'+g+'" aria-pressed="'+(m.genre===g)+'">'+g+'</button>').join('')+'</div></div>'+
+    '<div class="field"><label for="m-where">Onde assistir (opcional)</label><input id="m-where" class="input" data-m="where" placeholder="Netflix, Prime, cinema..." value="'+esc(m.where)+'"></div>'+
+    '<div class="field"><label for="m-note">Anotação (opcional)</label><input id="m-note" class="input" data-m="note" placeholder="Quem indicou, por que quer ver" value="'+esc(m.note)+'"></div>'+
+    '<button class="btn green full" style="min-height:54px" data-a="mvAdd">Adicionar</button></section>';
+  h+='<section class="card" aria-label="Sorteio"><div class="row"><span class="tile" style="background:var(--purpleSoft);color:var(--purple)">'+ic('dice')+'</span><span style="font-size:16px;font-weight:800">Sem ideia do que ver?</span></div>'+
+    '<span class="small">Sorteie um filme da sua lista e a decisão está tomada.</span>'+
+    '<button class="btn purple full" data-a="mvPick" '+(todo.length?'':'disabled')+'>Sortear um filme</button></section>';
+  h+='<section class="col fullrow mlist" style="gap:10px"><div class="sec-h"><h2>'+(f==='todo'?'Na fila':'Já assistidos')+'</h2><span class="meta">'+list.length+(list.length===1?' filme':' filmes')+'</span></div>';
+  if(!list.length)h+='<div class="card empty">'+(f==='todo'?'Sua lista está vazia. Adicione o primeiro filme acima.':'Nenhum filme assistido ainda. Quando ver um, marque na lista.')+'</div>';
+  else h+='<div class="mgrid">'+list.map(mv=>{const [col,soft]=COLORS[mvCol(mv.genre)];
+    return'<article class="card mcard"><div class="row" style="align-items:flex-start;gap:12px"><span class="poster" style="background:'+soft+';color:'+col+'">'+ic('film',24)+'</span>'+
+      '<div class="col" style="flex:1;min-width:0;gap:6px"><span style="font-size:16px;font-weight:800;overflow-wrap:anywhere">'+esc(mv.title)+'</span>'+
+      '<span class="row" style="gap:6px;flex-wrap:wrap"><span class="pill" style="background:'+soft+';color:'+col+'">'+esc(mv.genre)+'</span>'+(mv.where?'<span class="pill gray">'+esc(mv.where)+'</span>':'')+'</span>'+
+      (mv.note?'<span class="small">'+esc(mv.note)+'</span>':'')+
+      (mv.watched?'<span class="row" style="gap:8px">'+(mv.rating?'<span class="row" style="gap:2px">'+starRow(mv.rating,16)+'</span>':'<span class="small">Sem nota</span>')+(mv.watchedAt?'<span class="small">'+fmtShort(mv.watchedAt)+'</span>':'')+'</span>':'')+'</div></div>'+
+      '<div class="row">'+(mv.watched?'<button class="btn sm soft" style="flex:1" data-a="mvUndo" data-id="'+mv.id+'">Voltar para a fila</button>':'<button class="btn sm green" style="flex:1" data-a="mvWatch" data-id="'+mv.id+'">Já assisti</button>')+
+      '<button class="iconbtn light" style="width:40px;height:40px" data-a="mvDel" data-id="'+mv.id+'" aria-label="Remover '+esc(mv.title)+'">'+ic('trash',18)+'</button></div></article>';}).join('')+'</div>';
   return h+'</section></main>';
 }
 
@@ -535,7 +660,7 @@ function viewAjustes(){
     '<label for="s-name">Seu nome</label><input id="s-name" class="input" data-set="name" data-str="1" value="'+esc(C().name)+'" style="text-align:left">'+
     '<label for="s-just">Justificados por mês</label><input id="s-just" class="input" type="number" inputmode="numeric" min="0" max="31" data-set="justLimit" value="'+C().justLimit+'">'+
     (pts()?'<label for="s-rate">Pontos por real</label><input id="s-rate" class="input" type="number" inputmode="numeric" min="1" data-set="rate" value="'+C().rate+'">':'')+'</div>'+
-    '<span class="flabel">Seções do app</span><div class="chips"><button class="chipbtn" data-a="mod" data-v="premios" aria-pressed="'+C().modules.premios+'">Pontos e prêmios</button><button class="chipbtn" data-a="mod" data-v="gastos" aria-pressed="'+C().modules.gastos+'">Gastos</button></div></section>';
+    '<span class="flabel">Seções do app</span><div class="chips"><button class="chipbtn" data-a="mod" data-v="premios" aria-pressed="'+C().modules.premios+'">Pontos e prêmios</button><button class="chipbtn" data-a="mod" data-v="gastos" aria-pressed="'+C().modules.gastos+'">Gastos</button><button class="chipbtn" data-a="mod" data-v="filmes" aria-pressed="'+C().modules.filmes+'">Filmes</button></div></section>';
   if(pts())h+='<details class="card"><summary>Pontos de bônus'+ic('right',18)+'</summary><div class="setgrid">'+
     [['dia100','Dia 100%'],['meta','Meta semanal batida'],['semana','Semana perfeita'],['seq7','7 dias 100% seguidos'],['seq30','30 dias 100% seguidos'],['grupo','Etapa de plano concluída']].map(([k,n])=>'<label for="b-'+k+'">'+n+'</label><input id="b-'+k+'" class="input" type="number" inputmode="numeric" min="0" data-set="bonus.'+k+'" value="'+B[k]+'">').join('')+'</div><span class="small">Os pontos de cada hábito ficam na edição do hábito.</span></details>';
   if(C().modules.gastos)h+='<details class="card"><summary>Categorias de gastos'+ic('right',18)+'</summary><div class="col" style="gap:0">'+C().categories.map(ct=>'<div class="list-item"><span style="flex:1;font-weight:700">'+esc(ct)+'</span><button class="iconbtn light" style="width:40px;height:40px" data-a="catDel" data-v="'+esc(ct)+'" aria-label="Remover '+esc(ct)+'">'+ic('x',18)+'</button></div>').join('')+
@@ -560,6 +685,7 @@ function viewSetup(){
   if(st===4){h+='<h1>Últimos detalhes</h1><span class="sub" style="font-size:15px">Escolha o que mais o app vai ter. Dá para mudar depois em Ajustes.</span></header><main class="main">'+
     '<button class="card" style="text-align:left;cursor:pointer" data-a="mod" data-v="premios" aria-pressed="'+C().modules.premios+'"><div class="between"><span style="font-size:17px;font-weight:800">Pontos e prêmios</span><span class="check'+(C().modules.premios?' on':'')+'" aria-hidden="true">'+(C().modules.premios?ic('check',22,3):'')+'</span></div><span class="small">Cada hábito vale pontos. Você cadastra o que quer ganhar e só compra quando atingir os pontos.</span></button>'+
     '<button class="card" style="text-align:left;cursor:pointer" data-a="mod" data-v="gastos" aria-pressed="'+C().modules.gastos+'"><div class="between"><span style="font-size:17px;font-weight:800">Controle de gastos</span><span class="check'+(C().modules.gastos?' on':'')+'" aria-hidden="true">'+(C().modules.gastos?ic('check',22,3):'')+'</span></div><span class="small">Anote cada gasto em poucos toques, veja o total do mês por categoria e cadastre contas fixas.</span></button>'+
+    '<button class="card" style="text-align:left;cursor:pointer" data-a="mod" data-v="filmes" aria-pressed="'+C().modules.filmes+'"><div class="between"><span style="font-size:17px;font-weight:800">Filmes para assistir</span><span class="check'+(C().modules.filmes?' on':'')+'" aria-hidden="true">'+(C().modules.filmes?ic('check',22,3):'')+'</span></div><span class="small">Monte sua lista de filmes, sorteie o da noite e marque os que já viu com uma nota.</span></button>'+
     '<div class="row"><button class="btn ghost" data-a="step" data-v="3">Voltar</button><button class="btn green" style="flex:1;min-height:54px" data-a="finish">Começar a usar</button></div></main>';}
   return h;
 }
@@ -607,6 +733,8 @@ function sheetHtml(){const s=ui.sheet;if(!s)return'';let b='';
     '<div class="row"><div class="field" style="flex:1"><label for="r-val">Valor (R$)</label><input id="r-val" class="input" inputmode="decimal" placeholder="0,00" data-r="val" value="'+esc(r.val)+'"></div><div class="field" style="width:110px"><label for="r-day">Dia do mês</label><input id="r-day" class="input" type="number" inputmode="numeric" min="1" max="31" data-r="day" value="'+esc(r.day)+'"></div></div>'+
     '<div class="field"><span class="flabel">Categoria</span><div class="chips">'+C().categories.map(ct=>'<button class="chipbtn" data-a="recCat" data-v="'+esc(ct)+'" aria-pressed="'+(r.cat===ct)+'">'+esc(ct)+'</button>').join('')+'</div></div>'+
     '<div class="row"><button class="btn ghost" style="flex:1" data-a="sheetClose">Fechar</button><button class="btn green" style="flex:1" data-a="recAdd">Adicionar</button></div>';}
+  if(s.type==='rate'){const m=C().movies.find(x=>x.id===s.id);b='<h2>Como foi '+esc(m?m.title:'o filme')+'?</h2><p class="ptext">Toque nas estrelas para dar uma nota.</p><div class="row" style="justify-content:center;gap:6px">'+[1,2,3,4,5].map(n=>'<button class="starbtn" data-a="mvRate" data-v="'+n+'" aria-label="Nota '+n+'">'+starSvg(true,26)+'<span style="font-weight:800;margin-left:2px">'+n+'</span></button>').join('')+'</div><button class="btn soft" data-a="mvRate" data-v="0">Sem nota</button><button class="btn ghost" data-a="sheetClose">Cancelar</button>';}
+  if(s.type==='pick'){const m=C().movies.find(x=>x.id===s.id);b='<h2>Que tal assistir…</h2><p class="big" style="text-align:center;padding:10px 0">'+esc(m?m.title:'')+'</p>'+(m?'<div class="chips" style="justify-content:center"><span class="pill gray">'+esc(m.genre)+'</span>'+(m.where?'<span class="pill gray">'+esc(m.where)+'</span>':'')+'</div>'+(m.note?'<span class="small" style="text-align:center">'+esc(m.note)+'</span>':''):'')+'<div class="row"><button class="btn ghost" style="flex:1" data-a="mvPick">Sortear outro</button><button class="btn green" style="flex:1" data-a="mvWatch" data-id="'+(m?m.id:'')+'">Já assisti</button></div><button class="btn soft" data-a="sheetClose">Fechar</button>';}
   if(s.type==='bkText')b='<h2>Seu arquivo</h2><p class="ptext">Se o download não começou, copie o texto abaixo e guarde num arquivo ou numa nota. Para usar, escolha “Restaurar colando o texto”.</p><textarea class="input" id="bk" readonly>'+esc(s.text)+'</textarea><div class="row"><button class="btn ink" style="flex:1" data-a="copyBk">Copiar texto</button><button class="btn ghost" style="flex:1" data-a="sheetClose">Fechar</button></div>';
   if(s.type==='paste')b='<h2>Restaurar ou importar</h2><label for="pasteBk" class="small">Cole aqui o texto do arquivo</label><textarea class="input" id="pasteBk"></textarea><div class="row"><button class="btn ghost" style="flex:1" data-a="sheetClose">Cancelar</button><button class="btn ink" style="flex:1" data-a="pasteDo">Continuar</button></div>';
   return'<div class="backdrop" data-a="backdrop"><div class="sheet" role="dialog" aria-modal="true">'+b+'</div></div>';}
@@ -708,15 +836,15 @@ window.addEventListener('online',()=>{if(cloud.ready&&cloud.status==='offline')s
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&cloud.timer)cloudPush();});
 
 /* ================= render ================= */
-function tabs(){const t=[['hoje','Hoje','cal'],['resumo','Resumo','chart']];if(C().modules.premios)t.push(['premios','Prêmios','gift']);if(C().modules.gastos)t.push(['gastos','Gastos','wallet']);t.push(['ajustes','Ajustes','gear']);return t;}
+function tabs(){const t=[['hoje','Hoje','cal'],['resumo','Resumo','chart']];if(C().modules.premios)t.push(['premios','Prêmios','gift']);if(C().modules.filmes)t.push(['filmes','Filmes','film']);if(C().modules.gastos)t.push(['gastos','Gastos','wallet']);t.push(['ajustes','Ajustes','gear']);return t;}
 function render(){
   const app=document.getElementById('app');
-  if(cloud.gate){app.innerHTML=viewGate();return;}
-  if(ui.tab==='premios'&&!C().modules.premios)ui.tab='hoje';if(ui.tab==='gastos'&&!C().modules.gastos)ui.tab='hoje';
-  if(ui.tab==='setup'){app.innerHTML=viewSetup()+sheetHtml();return;}
-  const c=compute();const t=tabs();
-  const v=ui.tab==='hoje'?viewHoje(c):ui.tab==='resumo'?viewResumo(c):ui.tab==='premios'?viewPremios(c):ui.tab==='gastos'?viewGastos():viewAjustes();
-  app.innerHTML=v+'<nav class="tabs" aria-label="Seções"><div class="in" style="grid-template-columns:repeat('+t.length+',minmax(0,1fr))">'+t.map(([k,n,i])=>'<button data-a="tab" data-v="'+k+'" '+(ui.tab===k?'aria-current="page"':'')+'>'+ic(i,24)+n+'</button>').join('')+'</div></nav>'+sheetHtml();
+  if(cloud.gate){app.className='wrap solo';app.innerHTML=viewGate();return;}
+  if(ui.tab==='premios'&&!C().modules.premios)ui.tab='hoje';if(ui.tab==='gastos'&&!C().modules.gastos)ui.tab='hoje';if(ui.tab==='filmes'&&!C().modules.filmes)ui.tab='hoje';
+  if(ui.tab==='setup'){app.className='wrap solo';app.innerHTML=viewSetup()+sheetHtml();return;}
+  app.className='wrap hasnav';const c=compute();const t=tabs();
+  const v=ui.tab==='hoje'?viewHoje(c):ui.tab==='resumo'?viewResumo(c):ui.tab==='premios'?viewPremios(c):ui.tab==='gastos'?viewGastos():ui.tab==='filmes'?viewFilmes():viewAjustes();
+  app.innerHTML=v+'<nav class="tabs" aria-label="Seções"><div class="brand"><i>'+ic('cal',22)+'</i>Minha Rotina</div><div class="in" style="grid-template-columns:repeat('+t.length+',minmax(0,1fr))">'+t.map(([k,n,i])=>'<button data-a="tab" data-v="'+k+'" '+(ui.tab===k?'aria-current="page"':'')+'>'+ic(i,24)+n+'</button>').join('')+'</div></nav>'+sheetHtml();
   checkAch(c);
 }
 function applyTheme(){const t=C().theme||'auto';if(t==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t);}
@@ -858,6 +986,19 @@ document.addEventListener('click',e=>{
       C().recurring.push({id:uid(),desc:r.desc.trim(),value:x,cat:r.cat,day:dd});ui.rec={desc:'',val:'',cat:null,day:''};save();render();toast('Recorrente adicionado');break;}
     case'recDel':C().recurring=C().recurring.filter(x=>x.id!==id);save();render();break;
     /* ajustes */
+    /* filmes */
+    case'mFilter':ui.mfilter=v;render();break;
+    case'mvGenre':ui.mv.genre=v;render();break;
+    case'mvAdd':{const m=ui.mv;if(!m.title.trim()){toast('Escreva o nome do filme');break;}
+      C().movies.push({id:uid(),title:m.title.trim(),genre:m.genre,where:m.where.trim(),note:m.note.trim(),added:T,watched:false,rating:0});
+      ui.mv={title:'',genre:m.genre,where:'',note:''};save();render();toast('Filme adicionado');break;}
+    case'mvWatch':ui.sheet={type:'rate',id};render();break;
+    case'mvRate':{const m=C().movies.find(x=>x.id===ui.sheet.id);if(m){m.watched=true;m.rating=+v||0;m.watchedAt=T;}ui.sheet=null;save();render();toast('Boa! Movido para os assistidos');break;}
+    case'mvUndo':{const m=C().movies.find(x=>x.id===id);if(m){m.watched=false;m.rating=0;delete m.watchedAt;save();render();}break;}
+    case'mvDel':{const m=C().movies.find(x=>x.id===id);if(m)ask('Remover filme?',m.title,'Remover',()=>{C().movies=C().movies.filter(x=>x.id!==id);},true,true);break;}
+    case'mvPick':{const td=C().movies.filter(x=>!x.watched);if(!td.length){toast('Sua lista está vazia');break;}
+      const cur=ui.sheet&&ui.sheet.type==='pick'?ui.sheet.id:null;const pool=td.length>1?td.filter(x=>x.id!==cur):td;
+      ui.sheet={type:'pick',id:pool[Math.floor(Math.random()*pool.length)].id};render();break;}
     case'bk':backup(v);break;
     case'copyBk':{const ta=document.getElementById('bk');try{navigator.clipboard.writeText(ta.value).then(()=>toast('Copiado'),()=>{ta.select();toast('Selecione e copie o texto');});}catch(er){ta.select();toast('Selecione e copie o texto');}break;}
     case'pasteOpen':ui.sheet={type:'paste'};render();break;
@@ -873,6 +1014,7 @@ document.addEventListener('input',e=>{const t=e.target;
   if(t.dataset.d)ui.draft[t.dataset.d]=t.value;
   if(t.dataset.w){ui.wish[t.dataset.w]=t.value;const c=document.getElementById('w-conv');if(c)c.textContent=convTxt();}
   if(t.dataset.r)ui.rec[t.dataset.r]=t.value;
+  if(t.dataset.m)ui.mv[t.dataset.m]=t.value;
   if(t.dataset.p){ui.planEdit[t.dataset.p]=t.value;const c=document.getElementById('p-count');if(c)c.textContent=ui.planEdit.text.split('\n').filter(x=>x.trim()).length+' leituras';}
   if(t.dataset.e&&ui.edit){const f=t.dataset.e;if(f==='times')ui.edit.freq.times=t.value;else if(f==='s0')ui.edit.steps[0]=t.value;else if(f==='s1')ui.edit.steps[1]=t.value;else ui.edit[f]=t.value;}
   if(t.dataset.set&&t.dataset.str){C()[t.dataset.set]=t.value.trim().slice(0,30);save();}
