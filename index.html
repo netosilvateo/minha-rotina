@@ -272,6 +272,44 @@ nav.tabs button[aria-current="page"] svg{color:var(--green)}
   nav.tabs .in.scroll::-webkit-scrollbar{display:none}
   nav.tabs .in.scroll button{flex:0 0 68px}
 }
+
+/* ===== v5: mais limpo ===== */
+.hero.heroS{gap:14px;padding-bottom:22px}
+.heroS h1{font-size:26px}
+.heroS .datenav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:-4px 0 -6px -8px}
+.heroS .iconbtn.sm{width:36px;height:36px;border-radius:12px}
+.heroS .whitebtn{background:#FFFFFF;color:#13203B;margin-left:6px;min-height:34px;padding:0 12px}
+.heroS .ringbox,.heroS .ringbox svg{width:96px;height:96px}
+.heroS .ringbox .n{font-size:26px}
+.heroline{gap:18px;align-items:center}
+.streakline{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--heroMuted)}
+.streakline b{color:#fff;font-weight:800}
+.fold{display:flex;align-items:center;justify-content:space-between;width:100%;border:none;background:transparent;color:var(--muted);font-weight:800;font-size:14px;padding:6px 6px;min-height:40px;border-radius:12px}
+.fold svg{transition:transform .15s ease}
+.fold[aria-expanded="true"] svg{transform:rotate(90deg)}
+.seg.light{background:var(--soft);grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);flex:1;min-width:0}
+.seg.light button{color:var(--muted);font-size:14px;min-height:38px;padding:0 8px}
+.seg.light button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(21,26,51,.14)}
+.seg.light .cnt{opacity:.55;font-weight:700;margin-left:2px}
+.toolbar{display:flex;align-items:center;gap:10px}
+.titletabs{display:flex;gap:20px}
+.titletabs button{border:none;background:none;padding:0 0 4px;font-family:var(--display);font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15;color:var(--heroMuted);opacity:.75;border-bottom:3px solid transparent}
+.titletabs button[aria-selected="true"]{color:#fff;opacity:1;border-bottom-color:#3DD68C}
+.fab{position:fixed;right:16px;bottom:calc(82px + env(safe-area-inset-bottom,0px));z-index:15;display:inline-flex;align-items:center;gap:8px;min-height:54px;padding:0 20px 0 16px;border:none;border-radius:18px;background:var(--green);color:var(--onAccent);font-weight:800;font-size:15px;box-shadow:0 14px 28px -10px rgba(16,138,96,.65);transition:transform .12s ease}
+.fab:active{transform:scale(.97)}
+select.input{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238A93AD' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+@media (min-width:900px){
+  .heroS .ringbox,.heroS .ringbox svg{width:112px;height:112px}
+  .heroS .ringbox .n{font-size:30px}
+  .heroS h1{font-size:34px}
+  .titletabs button{font-size:34px}
+  .fab{right:40px;bottom:36px}
+  .wrap.hasnav>.main>section.fullrow{max-width:none}
+}
+@media (hover:hover){.fold:hover{background:var(--soft)}.fab:hover{filter:brightness(1.06)}}
+
+@media (max-width:899px){#toast{bottom:auto;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-20px)}#toast.show{transform:translate(-50%,0)}}
+@media (min-width:900px){.toolbar .seg.light{flex:0 1 440px}}
 </style>
 </head>
 <body>
@@ -448,6 +486,7 @@ const P_={
   layers:'<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>',
   film:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>',
   dice:'<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="9" cy="15" r="1.2"/><circle cx="15" cy="15" r="1.2"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>',
   image:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/>',
   heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
   dumbbell:'<path d="M6 7v10M3 10v4M18 7v10M21 10v4M6 12h12"/>',
@@ -477,7 +516,7 @@ const FLAME='<svg width="20" height="20" viewBox="0 0 24 24" fill="#F5A04A" aria
 const typeIcon=h=>(h.icon&&ICON_NAMES[h.icon])?h.icon:(h.type==='qty'?'drop':h.type==='time'?'timer':h.type==='plan'?'book':'check');
 
 /* ================= estado de interface ================= */
-const ui={tab:C().setupDone?'hoje':'setup',step:1,pick:new Set(),sel:todayKey(),rmode:'week',roff:0,moff:0,sheet:null,mfilter:'todo',mv:{title:'',genre:MOVIE_GENRES[0],where:'',note:'',cover:''},bfilter:'want',bk:{title:'',author:'',pages:'',note:'',cover:''},sh:{name:'',qty:'',store:''},cov:null,
+const ui={tab:C().setupDone?'hoje':'setup',step:1,pick:new Set(),sel:todayKey(),rmode:'week',roff:0,moff:0,sheet:null,mfilter:'todo',mv:{title:'',genre:MOVIE_GENRES[0],where:'',note:'',cover:''},bfilter:'want',bk:{title:'',author:'',pages:'',note:'',cover:''},sh:{name:'',qty:'',store:''},cov:null,rsec:'resumo',list:'filmes',more:false,showDone:false,
   timer:{hid:null,open:false,running:false,remain:0,endAt:0,total:0},
   draft:{val:'',cat:null,desc:'',date:''},wish:{name:'',price:'',cat:WISH_CATS[0]},rec:{desc:'',val:'',cat:null,day:''},edit:null,planEdit:null,pending:null};
 let confirmFn=null,confirmNoPts=false;
@@ -487,13 +526,13 @@ const pts=()=>C().modules.premios;
 /* ================= telas ================= */
 function heroDay(c,k,isT,info){
   const circ=351.86,p=info.pct||0,dash=(p/100*circ).toFixed(1);const nm=C().name?', '+esc(C().name):'';
-  return'<header class="hero"><div class="between"><div class="col"><span class="sub">'+esc(fmtLong(k))+'</span><h1>'+(isT?greet()+nm+'!':'Registrando '+fmtShort(k))+'</h1></div>'+
+  return'<header class="hero heroS"><div class="datenav"><button class="iconbtn sm" data-a="dayPrev" aria-label="Dia anterior">'+ic('left',20)+'</button><span class="sub">'+esc(fmtLong(k))+'</span><button class="iconbtn sm" data-a="dayNext" aria-label="Próximo dia" '+(isT?'disabled':'')+'>'+ic('right',20)+'</button>'+
+    (isT?'':'<button class="btn sm whitebtn" data-a="dayToday">Voltar para hoje</button>')+'</div>'+
+    '<div class="between"><h1>'+(isT?greet()+nm+'!':'Registrando '+fmtShort(k))+'</h1>'+
     (pts()?'<button class="chip-pts" data-a="tab" data-v="premios" aria-label="Ver prêmios, saldo de '+num(c.saldo)+' pontos">'+STAR+num(c.saldo)+' pts</button>':'')+'</div>'+
-    '<div class="row" style="gap:20px"><div class="ringbox"><svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="'+p+'% do dia concluído"><circle cx="66" cy="66" r="56" fill="none" stroke="#2F4170" stroke-width="13"/><circle class="ring-fg" cx="66" cy="66" r="56" fill="none" stroke="#3DD68C" stroke-width="13" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'" transform="rotate(-90 66 66)"/></svg><div class="c"><span class="n">'+(info.pct==null?'–':p+'%')+'</span><span class="sub" style="font-size:12px;margin-top:4px">do dia</span></div></div>'+
-    '<div class="col" style="gap:12px;min-width:0"><div class="col" style="gap:2px"><span style="font-size:22px;font-weight:800">'+info.doneN+' de '+info.total+'</span><span class="sub" style="font-size:13px">tarefas feitas'+(isT?' hoje':'')+'</span></div>'+
-    '<div class="streak">'+FLAME+'<div class="col" style="gap:0"><span style="font-size:14px;font-weight:800">'+c.streak+(c.streak===1?' dia seguido':' dias seguidos')+'</span><span class="sub" style="font-size:12px">Recorde: '+c.record+(c.record===1?' dia':' dias')+'</span></div></div></div></div>'+
-    '<div class="between"><div class="daynav"><button class="iconbtn" data-a="dayPrev" aria-label="Dia anterior">'+ic('left')+'</button><button class="iconbtn" data-a="dayNext" aria-label="Próximo dia" '+(isT?'disabled':'')+'>'+ic('right')+'</button></div>'+
-    (isT?'<span class="sub" style="font-size:13px;text-align:right">Use as setas para marcar dias anteriores</span>':'<button class="btn sm" style="background:#FFFFFF;color:#13203B" data-a="dayToday">Voltar para hoje</button>')+'</div></header>';
+    '<div class="row heroline"><div class="ringbox"><svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="'+p+'% do dia concluído"><circle cx="66" cy="66" r="56" fill="none" stroke="#2F4170" stroke-width="13"/><circle class="ring-fg" cx="66" cy="66" r="56" fill="none" stroke="#3DD68C" stroke-width="13" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'" transform="rotate(-90 66 66)"/></svg><div class="c"><span class="n">'+(info.pct==null?'–':p+'%')+'</span></div></div>'+
+    '<div class="col" style="gap:6px;min-width:0"><div class="col" style="gap:0"><span style="font-size:21px;font-weight:800">'+info.doneN+' de '+info.total+'</span><span class="sub" style="font-size:13px">tarefas feitas'+(isT?' hoje':'')+'</span></div>'+
+    '<span class="streakline" title="Recorde: '+c.record+(c.record===1?' dia':' dias')+'">'+FLAME+'<b>'+c.streak+'</b>'+(c.streak===1?' dia seguido':' dias seguidos')+'</span></div></div></header>';
 }
 const ptsTxt=n=>pts()?' · +'+n+' pts':'';
 function viewHoje(c){
@@ -527,25 +566,28 @@ function viewHoje(c){
       '<button class="iconbtn light" data-a="qty" data-id="'+hb.id+'" data-v="-'+hb.steps[0]+'" aria-label="Remover '+dec(hb.steps[0])+' '+esc(hb.unit)+'" '+(v?'':'disabled')+'>'+ic('minus')+'</button></div></section>';});
   // feito / tempo
   const list=sch.filter(x=>x.type==='check'||x.type==='time');
-  if(list.length){h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>'+(isT?'Hoje':'Neste dia')+'</h2><span class="meta">'+info.schDone+' de '+sch.length+' feitos</span></div><div class="card tight">';
-    list.forEach(hb=>{const v=r.h[hb.id],on=isDone(hb,v);const opt=typeof v==='string'?' ('+esc(v)+')':'';
-      h+='<div class="hrow'+(on?' done':'')+'"><button class="check'+(on?' on':'')+'" data-a="toggle" data-id="'+hb.id+'" aria-pressed="'+on+'" aria-label="'+esc(hb.name)+'">'+(on?ic('check',22,3):'')+'</button>'+
+  if(list.length){const isOn=hb=>isDone(hb,r.h[hb.id]);const pend=list.filter(x=>!isOn(x)),dn=list.filter(isOn);
+    const row=hb=>{const v=r.h[hb.id],on=isOn(hb);const opt=typeof v==='string'?' ('+esc(v)+')':'';
+      let s='<div class="hrow'+(on?' done':'')+'"><button class="check'+(on?' on':'')+'" data-a="toggle" data-id="'+hb.id+'" aria-pressed="'+on+'" aria-label="'+esc(hb.name)+'">'+(on?ic('check',22,3):'')+'</button>'+
         tileHtml(hb)+'<div class="col" style="flex:1;min-width:0;gap:2px"><span class="hname">'+esc(hb.name)+'</span><span class="small">'+(on?'Feito'+opt:hb.type==='time'?hb.minutes+' minutos':freqTxt(hb))+ptsTxt(hb.pts)+'</span></div>'+
         (hb.type==='time'&&isT&&!on?'<button class="btn sm ghost" data-a="timerOpen" data-id="'+hb.id+'" aria-expanded="'+(ui.timer.open&&ui.timer.hid===hb.id)+'">'+ic('timer',18)+'<span class="tmini" data-h="'+hb.id+'">'+fmtTimer(hb)+'</span></button>':'')+'</div>';
       if(hb.type==='time'&&isT&&ui.timer.open&&ui.timer.hid===hb.id&&!on){const t=ui.timer;
-        h+='<div class="timer"><div class="t" id="ttxt">'+fmtTimer(hb)+'</div><div class="bar" style="background:var(--surface)"><i id="tbar" style="width:'+timerPct()+'%;background:var(--green)"></i></div><div class="row">'+
-          (t.running?'<button class="btn ink" style="flex:1" data-a="timerPause">Pausar</button>':'<button class="btn green" style="flex:1" data-a="timerStart">'+(t.remain<t.total?'Continuar':'Iniciar')+'</button>')+'<button class="btn ghost" data-a="timerReset">Zerar</button></div><span class="small" style="text-align:center">Ao terminar, o hábito é marcado como feito.</span></div>';}});
-    h+='</div></section>';}
+        s+='<div class="timer"><div class="t" id="ttxt">'+fmtTimer(hb)+'</div><div class="bar" style="background:var(--surface)"><i id="tbar" style="width:'+timerPct()+'%;background:var(--green)"></i></div><div class="row">'+
+          (t.running?'<button class="btn ink" style="flex:1" data-a="timerPause">Pausar</button>':'<button class="btn green" style="flex:1" data-a="timerStart">'+(t.remain<t.total?'Continuar':'Iniciar')+'</button>')+'<button class="btn ghost" data-a="timerReset">Zerar</button></div><span class="small" style="text-align:center">Ao terminar, o hábito é marcado como feito.</span></div>';}
+      return s;};
+    h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>'+(isT?'Hoje':'Neste dia')+'</h2><span class="meta">'+info.schDone+' de '+sch.length+' feitos</span></div>';
+    if(pend.length)h+='<div class="card tight">'+pend.map(row).join('')+'</div>';
+    if(dn.length)h+='<button class="fold" data-a="toggleDone" aria-expanded="'+ui.showDone+'"><span>Feitas ('+dn.length+')</span>'+ic('right',18)+'</button>'+(ui.showDone?'<div class="card tight">'+dn.map(row).join('')+'</div>':'');
+    h+='</section>';}
   // semanais
   const wk=active().filter(isWeekly);
   if(wk.length){const ws=weekStart(k),wd=range(ws,addDays(ws,6));
-    h+='<section class="col fullrow" style="gap:10px"><div class="sec-h"><h2>Metas da semana</h2><span class="meta">Dias livres</span></div><div class="grid2">';
+    h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Metas da semana</h2></div><div class="card tight">';
     wk.forEach(hb=>{const cnt=wd.filter(x=>isDone(hb,val(x,hb))).length,g=+hb.freq.times||1,v=r.h[hb.id],on=isDone(hb,v),hit=cnt>=g;const col=hit?'var(--orange)':(COLORS[hb.color]||COLORS.green)[0];
-      const sub=hit?(cnt>g?'Meta batida + '+(cnt-g)+' bônus':'Meta batida! Extra vale bônus'):'Falta'+(g-cnt>1?'m ':' ')+(g-cnt)+' nesta semana';
-      const lab=on?'Feito'+(typeof v==='string'?' ('+esc(v)+')':isT?' hoje':''):(isT?'Fiz hoje':'Fiz neste dia');
-      h+='<div class="wcard"><div class="row" style="gap:10px">'+tileHtml(hb)+'<span style="font-size:15px;font-weight:800;overflow-wrap:anywhere">'+esc(hb.name)+'</span></div><div class="row" style="gap:4px;align-items:baseline"><span class="wnum" style="color:'+col+'">'+cnt+'</span><span class="meta" style="font-size:15px">/ '+g+'</span></div>'+
-        '<div class="bar"><i style="width:'+Math.min(100,cnt/g*100)+'%;background:'+col+'"></i></div><span class="small" style="font-size:12px;min-height:32px">'+sub+'</span>'+
-        '<button class="btn sm '+(on?'':'ink')+'" style="min-height:44px;'+(on?'background:var(--greenSoft);color:var(--greenInk)':'')+'" data-a="toggle" data-id="'+hb.id+'" aria-pressed="'+on+'">'+lab+'</button></div>';});
+      const sub=hit?(cnt>g?'Meta batida + '+(cnt-g)+' bônus':'Meta batida!'):'Falta'+(g-cnt>1?'m ':' ')+(g-cnt)+' nesta semana';
+      h+='<div class="hrow"><button class="check'+(on?' on':'')+'" data-a="toggle" data-id="'+hb.id+'" aria-pressed="'+on+'" aria-label="'+esc(hb.name)+(on?(typeof v==='string'?' ('+esc(v)+')':' feito')+'':': marcar '+(isT?'hoje':'neste dia'))+'">'+(on?ic('check',22,3):'')+'</button>'+
+        tileHtml(hb)+'<div class="col" style="flex:1;min-width:0;gap:5px"><div class="between"><span class="hname">'+esc(hb.name)+'</span><span style="font-weight:800;white-space:nowrap;color:'+col+'">'+cnt+' <span class="meta" style="font-size:14px">/ '+g+'</span></span></div>'+
+        '<div class="bar" style="height:6px"><i style="width:'+Math.min(100,cnt/g*100)+'%;background:'+col+'"></i></div><span class="small" style="font-size:12px">'+sub+'</span></div></div>';});
     h+='</div></section>';}
   const off=active().filter(x=>!isWeekly(x)&&!sched(x,k));
   if(off.length)h+='<p class="small" style="margin:0 4px">Sem agenda neste dia: '+off.map(x=>esc(x.name)).join(', ')+'.</p>';
@@ -564,7 +606,7 @@ function viewResumo(c){
   const T=todayKey(),start=firstKey(),per=periodDays();
   const el=per.days.filter(k=>k<=T&&k>=start),cnt=el.filter(k=>!dayRec(k).j);
   const withPct=cnt.map(k=>dayInfo(k).pct).filter(p=>p!=null);const avg=withPct.length?Math.round(withPct.reduce((a,b)=>a+b,0)/withPct.length):0;
-  let h='<header class="hero"><div class="between"><h1>Resumo</h1><div class="daynav"><button class="iconbtn" data-a="rPrev" aria-label="Período anterior">'+ic('left')+'</button><button class="iconbtn" data-a="rNext" aria-label="Próximo período" '+(ui.roff>=0?'disabled':'')+'>'+ic('right')+'</button></div></div>'+
+  let h='<header class="hero"><div class="between">'+titleTabs('resumo')+'<div class="daynav"><button class="iconbtn" data-a="rPrev" aria-label="Período anterior">'+ic('left')+'</button><button class="iconbtn" data-a="rNext" aria-label="Próximo período" '+(ui.roff>=0?'disabled':'')+'>'+ic('right')+'</button></div></div>'+
     '<div class="seg" role="group" aria-label="Período"><button data-a="rMode" data-v="week" aria-pressed="'+(ui.rmode==='week')+'">Semana</button><button data-a="rMode" data-v="month" aria-pressed="'+(ui.rmode==='month')+'">Mês</button></div>'+
     '<div class="between"><div class="col" style="gap:0"><span class="sub">'+esc(per.label)+'</span><span style="font-family:var(--display);font-size:44px;font-weight:700;line-height:1.1">'+avg+'%</span><span class="sub">média dos dias</span></div>'+
     '<div class="col" style="gap:0;text-align:right"><span style="font-size:22px;font-weight:800">'+el.filter(k=>dayInfo(k).full).length+'</span><span class="sub">dias 100%</span></div></div></header><main class="main">';
@@ -601,7 +643,7 @@ function viewResumo(c){
 
 function viewPremios(c){
   const L=level(c.earned),rate=C().rate;const lp=(c.earned-L.cur)/(L.next-L.cur)*100;
-  let h='<header class="hero"><div class="between"><h1>Prêmios</h1><span class="pill" style="background:var(--hero2);color:#FFD8A8">Nível '+L.n+'</span></div>'+
+  let h='<header class="hero"><div class="between">'+titleTabs('premios')+'<span class="pill" style="background:var(--hero2);color:#FFD8A8">Nível '+L.n+'</span></div>'+
     '<div class="col" style="gap:2px"><span class="sub">Seu saldo</span><span class="row" style="gap:8px"><span style="font-family:var(--display);font-size:48px;font-weight:700;line-height:1.05">'+num(c.saldo)+'</span><span style="font-size:18px;font-weight:800;color:#FFD8A8">pts</span></span></div>'+
     '<div class="col" style="gap:6px"><div class="bar" style="background:var(--hero2)"><i style="width:'+lp+'%;background:#F5A04A"></i></div><div class="between sub" style="font-size:13px"><span>Faltam '+num(L.next-c.earned)+' pts para o nível '+(L.n+1)+'</span><span>Total: '+num(c.earned)+'</span></div></div></header><main class="main">';
   h+='<div class="card fullrow" style="flex-direction:row;align-items:center;justify-content:space-between"><div class="col" style="gap:0"><span style="font-weight:800">1 real = '+rate+' pontos</span><span class="small">Taxa usada na lista de desejos</span></div><button class="btn sm ghost" data-a="tab" data-v="ajustes">Ajustar</button></div>';
@@ -635,17 +677,10 @@ function viewGastos(){
   if(ui.moff===0)pendingRecurring().forEach(r=>{
     h+='<div class="card" style="background:var(--orangeSoft);border-color:transparent"><div class="between"><div class="col" style="gap:0;min-width:0"><span style="font-weight:800;color:var(--orangeInk)">Recorrente pendente</span><span style="font-size:17px;font-weight:800;overflow-wrap:anywhere">'+esc(r.desc)+'</span><span class="small">'+esc(r.cat)+' · todo dia '+r.day+'</span></div>'+ic('repeat',22)+'</div>'+
       '<div class="row"><label class="vh" for="rv-'+r.id+'">Valor de '+esc(r.desc)+'</label><input id="rv-'+r.id+'" class="input" inputmode="numeric" data-mask="money" value="'+r.value.toFixed(2).replace('.',',')+'" style="flex:1;min-width:0"><button class="btn ink" data-a="recConfirm" data-id="'+r.id+'">Confirmar</button><button class="btn ghost" data-a="recSkip" data-id="'+r.id+'">Pular</button></div></div>';});
-  const dr=ui.draft;if(!dr.date)dr.date=T;
-  h+='<section class="card" aria-label="Novo gasto"><span style="font-size:16px;font-weight:800">Novo gasto</span>'+
-    '<div class="field"><label for="g-val">Valor (R$)</label><input id="g-val" class="input money" inputmode="numeric" placeholder="0,00" autocomplete="off" data-mask="money" data-d="val" value="'+esc(dr.val)+'"></div>'+
-    '<div class="field"><span class="flabel">Categoria</span><div class="chips">'+C().categories.map(ct=>'<button class="chipbtn" data-a="expCat" data-v="'+esc(ct)+'" aria-pressed="'+(dr.cat===ct)+'">'+esc(ct)+'</button>').join('')+'</div></div>'+
-    '<div class="field"><label for="g-desc">Descrição (opcional)</label><input id="g-desc" class="input" placeholder="Ex.: feira da semana" data-d="desc" value="'+esc(dr.desc)+'"></div>'+
-    '<div class="field"><label for="g-date">Data</label><input id="g-date" class="input" type="date" max="'+T+'" data-d="date" value="'+esc(dr.date)+'"></div>'+
-    '<button class="btn green full" style="min-height:54px" data-a="expSave">Salvar gasto</button></section>';
   if(ex.length){const by={};ex.forEach(e=>by[e.cat]=(by[e.cat]||0)+e.value);const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]),mx=arr[0][1];
     h+='<section class="col" style="gap:10px"><div class="sec-h"><h2>Por categoria</h2></div><div class="card tight" style="padding:6px 16px">'+arr.map(([ct,v])=>'<div class="statrow"><div class="between"><span style="font-weight:800">'+esc(ct)+'</span><span style="font-weight:800">'+money(v)+' <span class="small">'+Math.round(v/total*100)+'%</span></span></div><div class="bar"><i style="width:'+(v/mx*100)+'%;background:var(--blue)"></i></div></div>').join('')+'</div></section>';}
   h+='<section class="col fullrow" style="gap:10px"><div class="sec-h"><h2>Lançamentos</h2><button class="btn sm ghost" data-a="recOpen">'+ic('repeat',18)+'Recorrentes ('+C().recurring.length+')</button></div>';
-  if(!ex.length)h+='<div class="card empty">Nenhum gasto neste mês. Digite o valor acima e escolha a categoria.</div>';
+  if(!ex.length)h+='<div class="card empty">Nenhum gasto neste mês. Toque em “Novo gasto” para registrar.</div>';
   else{const g={};ex.forEach(e=>{(g[e.date]=g[e.date]||[]).push(e);});
     Object.keys(g).sort().reverse().forEach(dk=>{h+='<div class="datehead">'+(dk===T?'Hoje':dk===addDays(T,-1)?'Ontem':esc(fmtLong(dk)))+' · '+money(g[dk].reduce((a,e)=>a+e.value,0))+'</div><div class="card tight">'+
       g[dk].map(e=>'<div class="list-item"><div class="col" style="flex:1;gap:0;min-width:0"><span style="font-weight:800;overflow-wrap:anywhere">'+esc(e.desc||e.cat)+'</span><span class="small">'+esc(e.cat)+(e.rec?' · recorrente':'')+'</span></div><span style="font-weight:800">'+money(e.value)+'</span><button class="iconbtn light" style="width:40px;height:40px" data-a="expDel" data-id="'+e.id+'" aria-label="Apagar gasto">'+ic('x',18)+'</button></div>').join('')+'</div>';});}
@@ -657,37 +692,6 @@ const STARPATH=P_.star.match(/d="([^"]+)"/)[1];
 const starSvg=(on,sz)=>'<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="'+(on?'#F5A04A':'none')+'" stroke="#F5A04A" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="'+STARPATH+'"/></svg>';
 const starRow=(n,sz)=>[1,2,3,4,5].map(i=>starSvg(i<=n,sz)).join('');
 const mvCol=g=>Object.keys(COLORS)[Math.max(0,MOVIE_GENRES.indexOf(g))%6];
-function viewFilmes(){
-  const L=C().movies,todo=L.filter(m=>!m.watched),seen=L.filter(m=>m.watched);
-  const yr=String(new Date().getFullYear()),seenYear=seen.filter(m=>(m.watchedAt||'').startsWith(yr)).length;
-  const f=ui.mfilter;
-  const list=f==='todo'?todo.slice().reverse():seen.slice().sort((a,b)=>(b.watchedAt||'').localeCompare(a.watchedAt||''));
-  let h='<header class="hero"><h1>Filmes</h1>'+
-    '<div class="between"><div class="col" style="gap:0"><span class="sub">Quero assistir</span><span class="bigstat">'+todo.length+'</span></div><div class="col" style="gap:0;text-align:right"><span class="sub">Vistos em '+yr+'</span><span class="bigstat">'+seenYear+'</span></div></div>'+
-    '<div class="seg" role="group" aria-label="Lista"><button data-a="mFilter" data-v="todo" aria-pressed="'+(f==='todo')+'">Quero assistir ('+todo.length+')</button><button data-a="mFilter" data-v="seen" aria-pressed="'+(f==='seen')+'">Já vi ('+seen.length+')</button></div></header><main class="main">';
-  const m=ui.mv;
-  h+='<section class="card mform" aria-label="Novo filme"><span style="font-size:16px;font-weight:800">Adicionar à lista</span>'+
-    '<div class="field"><label for="m-title">Nome do filme</label><input id="m-title" class="input" data-m="title" placeholder="Ex.: Interestelar" autocomplete="off" value="'+esc(m.title)+'"></div>'+
-    coverField('movie')+'<div class="field"><span class="flabel">Gênero</span><div class="chips">'+MOVIE_GENRES.map(g=>'<button class="chipbtn" data-a="mvGenre" data-v="'+g+'" aria-pressed="'+(m.genre===g)+'">'+g+'</button>').join('')+'</div></div>'+
-    '<div class="field"><label for="m-where">Onde assistir (opcional)</label><input id="m-where" class="input" data-m="where" placeholder="Netflix, Prime, cinema..." value="'+esc(m.where)+'"></div>'+
-    '<div class="field"><label for="m-note">Anotação (opcional)</label><input id="m-note" class="input" data-m="note" placeholder="Quem indicou, por que quer ver" value="'+esc(m.note)+'"></div>'+
-    '<button class="btn green full" style="min-height:54px" data-a="mvAdd">Adicionar</button></section>';
-  h+='<section class="card" aria-label="Sorteio"><div class="row"><span class="tile" style="background:var(--purpleSoft);color:var(--purple)">'+ic('dice')+'</span><span style="font-size:16px;font-weight:800">Sem ideia do que ver?</span></div>'+
-    '<span class="small">Sorteie um filme da sua lista e a decisão está tomada.</span>'+
-    '<button class="btn purple full" data-a="mvPick" '+(todo.length?'':'disabled')+'>Sortear um filme</button></section>';
-  h+='<section class="col fullrow mlist" style="gap:10px"><div class="sec-h"><h2>'+(f==='todo'?'Na fila':'Já assistidos')+'</h2><span class="meta">'+list.length+(list.length===1?' filme':' filmes')+'</span></div>';
-  if(!list.length)h+='<div class="card empty">'+(f==='todo'?'Sua lista está vazia. Adicione o primeiro filme acima.':'Nenhum filme assistido ainda. Quando ver um, marque na lista.')+'</div>';
-  else h+='<div class="mgrid">'+list.map(mv=>{const [col,soft]=COLORS[mvCol(mv.genre)];
-    return'<article class="card mcard"><div class="row" style="align-items:flex-start;gap:12px">'+posterHtml(mv,col,soft,'film')+
-      '<div class="col" style="flex:1;min-width:0;gap:6px"><span style="font-size:16px;font-weight:800;overflow-wrap:anywhere">'+esc(mv.title)+'</span>'+
-      '<span class="row" style="gap:6px;flex-wrap:wrap"><span class="pill" style="background:'+soft+';color:'+col+'">'+esc(mv.genre)+'</span>'+(mv.where?'<span class="pill gray">'+esc(mv.where)+'</span>':'')+'</span>'+
-      (mv.note?'<span class="small">'+esc(mv.note)+'</span>':'')+
-      (mv.watched?'<span class="row" style="gap:8px">'+(mv.rating?'<span class="row" style="gap:2px">'+starRow(mv.rating,16)+'</span>':'<span class="small">Sem nota</span>')+(mv.watchedAt?'<span class="small">'+fmtShort(mv.watchedAt)+'</span>':'')+'</span>':'')+'</div></div>'+
-      '<div class="row">'+(mv.watched?'<button class="btn sm soft" style="flex:1" data-a="mvUndo" data-id="'+mv.id+'">Voltar para a fila</button>':'<button class="btn sm green" style="flex:1" data-a="mvWatch" data-id="'+mv.id+'">Já assisti</button>')+
-      '<button class="iconbtn light" style="width:40px;height:40px" data-a="covOpen" data-k="movie" data-id="'+mv.id+'" aria-label="Buscar capa de '+esc(mv.title)+'">'+ic('image',18)+'</button>'+'<button class="iconbtn light" style="width:40px;height:40px" data-a="mvDel" data-id="'+mv.id+'" aria-label="Remover '+esc(mv.title)+'">'+ic('trash',18)+'</button></div></article>';}).join('')+'</div>';
-  return h+'</section></main>';
-}
-
 /* ---------- utilidades novas ---------- */
 function maskMoney(v){let d=String(v||'').replace(/\D/g,'').replace(/^0+/,'');if(!d)return'';d=d.padStart(3,'0');
   const int=d.slice(0,-2).replace(/\B(?=(\d{3})+(?!\d))/g,'.');return int+','+d.slice(-2);}
@@ -695,10 +699,6 @@ const ICON_CHOICES=['check','drop','book','timer','heart','dumbbell','walk','bik
 const ICON_NAMES={check:'Marca',drop:'Água',book:'Livro',timer:'Relógio',heart:'Coração',dumbbell:'Treino',walk:'Caminhada',bike:'Bicicleta',moon:'Lua',sun:'Sol',pill:'Remédio',apple:'Fruta',leaf:'Folha',pencil:'Lápis',phone:'Celular',home:'Casa',plant:'Planta',cart:'Compras',music:'Música',dollar:'Dinheiro',cross:'Cruz',smile:'Sorriso',bed:'Cama',globe:'Idioma',coffee:'Café',users:'Pessoas',briefcase:'Trabalho',star:'Estrela',flame:'Fogo'};
 function tileHtml(hb,sz){const [col,soft]=COLORS[hb.color]||COLORS.green;return'<span class="tile sm" style="background:'+soft+';color:'+col+'">'+ic(typeIcon(hb),sz||20)+'</span>';}
 const posterHtml=(it,col,soft,icn)=>'<span class="poster" style="background:'+soft+';color:'+col+'">'+ic(icn,24)+(it.cover?'<img src="'+esc(it.cover)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</span>';
-function coverField(kind){const it=kind==='book'?ui.bk:ui.mv;
-  return'<div class="field"><span class="flabel">Capa (opcional)</span><div class="row">'+(it.cover?'<img class="cvthumb" src="'+esc(it.cover)+'" alt="Capa escolhida" referrerpolicy="no-referrer">':'')+
-    '<button class="btn sm soft" style="flex:1" data-a="covOpen" data-k="'+kind+'">'+ic('image',18)+(it.cover?'Trocar capa':'Buscar capa na internet')+'</button></div></div>';}
-
 /* ---------- busca de capas ---------- */
 async function jget(u){const r=await fetch(u);if(!r.ok)throw new Error('http '+r.status);return r.json();}
 const httpsImg=u=>u?String(u).replace(/^http:/,'https:').replace('&edge=curl',''):'';
@@ -723,6 +723,7 @@ async function covSearch(){const cv=ui.cov;if(!cv)return;if(!cv.q.trim()){toast(
   try{cv.results=cv.kind==='book'?await searchBooks(cv.q):await searchMovies(cv.q);if(!cv.results.length)cv.err='Nada encontrado. Tente outro título ou só parte do nome.';}
   catch(e){cv.results=[];cv.err='Não consegui buscar agora. Verifique a internet e tente de novo.';}
   cv.loading=false;if(ui.cov===cv&&ui.sheet&&ui.sheet.type==='covers')render();}
+function covBack(){const cv=ui.cov;ui.sheet=cv&&cv.target==='new'?{type:cv.kind==='book'?'addBk':'addMv'}:null;ui.cov=null;}
 function covSheet(){const cv=ui.cov;if(!cv)return'';
   const cur=cv.target==='new'?(cv.kind==='book'?ui.bk:ui.mv):(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target)||{};
   let b='<h2>Buscar capa</h2><div class="row"><label class="vh" for="cv-q">Título</label><input id="cv-q" class="input" data-cq="1" value="'+esc(cv.q)+'" placeholder="Título" style="flex:1;min-width:0"><button class="btn ink" data-a="covGo">Buscar</button></div>';
@@ -732,24 +733,42 @@ function covSheet(){const cv=ui.cov;if(!cv)return'';
   if(cv.results&&cv.results.length)b+='<div class="covgrid">'+cv.results.map((r,i)=>'<button class="covitem" data-a="covPick" data-i="'+i+'"><img src="'+esc(r.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer"><b>'+esc(r.title)+'</b><small>'+esc(r.sub)+'</small></button>').join('')+'</div>';
   if(cv.kind==='movie'&&!(C().tmdbKey||'').trim())b+='<span class="small">Dica: para achar séries e mais títulos, adicione uma chave grátis do TMDB em Ajustes.</span>';
   if(cur.cover)b+='<button class="btn danger" data-a="covRemove">Remover capa</button>';
-  return b+'<button class="btn ghost" data-a="sheetClose">Fechar</button>';}
+  return b+'<button class="btn ghost" data-a="covClose">Voltar</button>';}
 
-/* ---------- livros ---------- */
-function viewLivros(){
+/* ---------- listas: filmes, livros e compras ---------- */
+const LISTS=[['filmes','Filmes'],['livros','Livros'],['compras','Compras']];
+const listsOn=()=>LISTS.filter(([k])=>C().modules[k]);
+const subSeg=(act,cur,items)=>'<div class="seg light" role="group">'+items.map(([k,n,c])=>'<button data-a="'+act+'" data-v="'+k+'" aria-pressed="'+(cur===k)+'">'+n+' <span class="cnt">'+c+'</span></button>').join('')+'</div>';
+const fabHtml=lbl=>'<button class="fab" data-a="addOpen">'+ic('plus',22,2.6)+'<span>'+lbl+'</span></button>';
+const moreBtn=()=>'<button class="btn sm ghost" style="align-self:flex-start" data-a="more" aria-expanded="'+ui.more+'">'+(ui.more?'Menos detalhes':'Mais detalhes')+'</button>';
+function coverRow(kind){const it=kind==='book'?ui.bk:ui.mv;
+  return'<div class="row">'+(it.cover?'<img class="cvthumb" src="'+esc(it.cover)+'" alt="Capa escolhida" referrerpolicy="no-referrer">':'')+'<button class="btn sm soft" style="flex:1" data-a="covOpen" data-k="'+kind+'">'+ic('image',18)+(it.cover?'Trocar capa':'Buscar capa')+'</button></div>';}
+function titleTabs(cur){if(!pts())return'<h1>'+(cur==='premios'?'Prêmios':'Resumo')+'</h1>';
+  return'<div class="titletabs" role="tablist">'+[['resumo','Resumo'],['premios','Prêmios']].map(([k,n])=>'<button role="tab" aria-selected="'+(cur===k)+'" data-a="rsec" data-v="'+k+'">'+n+'</button>').join('')+'</div>';}
+
+function listFilmes(){
+  const L=C().movies,todo=L.filter(m=>!m.watched),seen=L.filter(m=>m.watched),f=ui.mfilter,yr=String(new Date().getFullYear());
+  const sy=seen.filter(m=>(m.watchedAt||'').startsWith(yr)).length;
+  const list=f==='todo'?todo.slice().reverse():seen.slice().sort((a,b)=>(b.watchedAt||'').localeCompare(a.watchedAt||''));
+  let h='<div class="toolbar">'+subSeg('mFilter',f,[['todo','Quero ver',todo.length],['seen','Já vi',seen.length]])+(f==='todo'&&todo.length>1?'<button class="btn sm soft" data-a="mvPick">'+ic('dice',18)+'Sortear</button>':'')+'</div>';
+  if(!list.length)h+='<div class="card empty">'+(f==='todo'?'Sua lista está vazia. Toque em “Novo filme” para começar.':'Nenhum filme visto ainda. Quando assistir a um, marque “Já assisti”.')+'</div>';
+  else h+='<div class="mgrid">'+list.map(mv=>{const [col,soft]=COLORS[mvCol(mv.genre)];
+    return'<article class="card mcard"><div class="row" style="align-items:flex-start;gap:12px">'+posterHtml(mv,col,soft,'film')+
+      '<div class="col" style="flex:1;min-width:0;gap:6px"><span style="font-size:16px;font-weight:800;overflow-wrap:anywhere">'+esc(mv.title)+'</span>'+
+      '<span class="row" style="gap:6px;flex-wrap:wrap"><span class="pill" style="background:'+soft+';color:'+col+'">'+esc(mv.genre)+'</span>'+(mv.where?'<span class="pill gray">'+esc(mv.where)+'</span>':'')+'</span>'+
+      (mv.note?'<span class="small">'+esc(mv.note)+'</span>':'')+
+      (mv.watched?'<span class="row" style="gap:8px">'+(mv.rating?'<span class="row" style="gap:2px">'+starRow(mv.rating,16)+'</span>':'<span class="small">Sem nota</span>')+(mv.watchedAt?'<span class="small">'+fmtShort(mv.watchedAt)+'</span>':'')+'</span>':'')+'</div></div>'+
+      '<div class="row">'+(mv.watched?'<button class="btn sm soft" style="flex:1" data-a="mvUndo" data-id="'+mv.id+'">Voltar para a fila</button>':'<button class="btn sm green" style="flex:1" data-a="mvWatch" data-id="'+mv.id+'">Já assisti</button>')+
+      '<button class="iconbtn light" style="width:40px;height:40px" data-a="covOpen" data-k="movie" data-id="'+mv.id+'" aria-label="Buscar capa de '+esc(mv.title)+'">'+ic('image',18)+'</button>'+
+      '<button class="iconbtn light" style="width:40px;height:40px" data-a="mvDel" data-id="'+mv.id+'" aria-label="Remover '+esc(mv.title)+'">'+ic('trash',18)+'</button></div></article>';}).join('')+'</div>';
+  return{stat:todo.length+' para assistir · '+sy+(sy===1?' visto':' vistos')+' em '+yr,lbl:'Novo filme',h};
+}
+function listLivros(){
   const L=C().books,by=s=>L.filter(b=>b.status===s),f=ui.bfilter,yr=String(new Date().getFullYear());
-  const readYear=by('read').filter(b=>(b.finishedAt||'').startsWith(yr)).length;
+  const ry=by('read').filter(b=>(b.finishedAt||'').startsWith(yr)).length;
   const list=f==='read'?by('read').sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')):by(f).reverse();
-  const tabs3=[['want','Quero ler'],['reading','Lendo'],['read','Lidos']];
-  let h='<header class="hero"><h1>Livros</h1><div class="between"><div class="col" style="gap:0"><span class="sub">Lendo agora</span><span class="bigstat">'+by('reading').length+'</span></div><div class="col" style="gap:0;text-align:right"><span class="sub">Lidos em '+yr+'</span><span class="bigstat">'+readYear+'</span></div></div>'+
-    '<div class="seg three" role="group" aria-label="Lista">'+tabs3.map(([k,n])=>'<button data-a="bFilter" data-v="'+k+'" aria-pressed="'+(f===k)+'">'+n+' ('+by(k).length+')</button>').join('')+'</div></header><main class="main">';
-  const b=ui.bk;
-  h+='<section class="card mform" aria-label="Novo livro"><span style="font-size:16px;font-weight:800">Adicionar livro</span>'+
-    '<div class="field"><label for="b-title">Título</label><input id="b-title" class="input" data-bk="title" placeholder="Ex.: Dom Casmurro" autocomplete="off" value="'+esc(b.title)+'"></div>'+coverField('book')+
-    '<div class="row"><div class="field" style="flex:1;min-width:0"><label for="b-author">Autor (opcional)</label><input id="b-author" class="input" data-bk="author" value="'+esc(b.author)+'"></div><div class="field" style="width:110px"><label for="b-pages">Páginas</label><input id="b-pages" class="input" type="number" inputmode="numeric" min="0" data-bk="pages" value="'+esc(b.pages)+'"></div></div>'+
-    '<div class="field"><label for="b-note">Anotação (opcional)</label><input id="b-note" class="input" data-bk="note" placeholder="Quem indicou, por que quer ler" value="'+esc(b.note)+'"></div>'+
-    '<button class="btn green full" style="min-height:54px" data-a="bkAdd">Adicionar</button></section>';
-  h+='<section class="col fullrow mlist" style="gap:10px"><div class="sec-h"><h2>'+({want:'Na fila',reading:'Lendo agora',read:'Já lidos'})[f]+'</h2><span class="meta">'+list.length+(list.length===1?' livro':' livros')+'</span></div>';
-  if(!list.length)h+='<div class="card empty">'+({want:'Sua fila está vazia. Adicione o primeiro livro.',reading:'Nenhum livro em andamento. Toque em “Começar a ler” num livro da fila.',read:'Nenhum livro lido ainda.'})[f]+'</div>';
+  let h='<div class="toolbar">'+subSeg('bFilter',f,[['want','Quero ler',by('want').length],['reading','Lendo',by('reading').length],['read','Lidos',by('read').length]])+'</div>';
+  if(!list.length)h+='<div class="card empty">'+({want:'Sua fila está vazia. Toque em “Novo livro” para começar.',reading:'Nenhum livro em andamento. Toque em “Começar a ler” num livro da fila.',read:'Nenhum livro lido ainda.'})[f]+'</div>';
   else h+='<div class="mgrid">'+list.map(bk=>{const pg=+bk.pages||0,cur=Math.min(+bk.page||0,pg||1e9),pct=pg?Math.round(cur/pg*100):0;
     return'<article class="card mcard"><div class="row" style="align-items:flex-start;gap:12px">'+posterHtml(bk,'var(--blue)','var(--blueSoft)','book')+
       '<div class="col" style="flex:1;min-width:0;gap:6px"><span style="font-size:16px;font-weight:800;overflow-wrap:anywhere">'+esc(bk.title)+'</span>'+
@@ -762,32 +781,50 @@ function viewLivros(){
         '<button class="btn sm soft" style="flex:1" data-a="bkToReading" data-id="'+bk.id+'">Reabrir</button>')+
       '<button class="iconbtn light" style="width:40px;height:40px" data-a="covOpen" data-k="book" data-id="'+bk.id+'" aria-label="Buscar capa de '+esc(bk.title)+'">'+ic('image',18)+'</button>'+
       '<button class="iconbtn light" style="width:40px;height:40px" data-a="bkDel" data-id="'+bk.id+'" aria-label="Remover '+esc(bk.title)+'">'+ic('trash',18)+'</button></div></article>';}).join('')+'</div>';
-  return h+'</section></main>';
+  return{stat:by('reading').length+' lendo · '+ry+(ry===1?' lido':' lidos')+' em '+yr,lbl:'Novo livro',h};
 }
-
-/* ---------- lista de compras ---------- */
-function viewCompras(){
+function listCompras(){
   const L=C().shopping,open=L.filter(x=>!x.done),done=L.filter(x=>x.done);
-  const stores=[...new Set(L.map(x=>x.store).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  const sh=ui.sh,pct=L.length?Math.round(done.length/L.length*100):0;
-  let h='<header class="hero"><h1>Lista de compras</h1><div class="between"><div class="col" style="gap:0"><span class="sub">Falta comprar</span><span class="bigstat">'+open.length+'</span></div><div class="col" style="gap:0;text-align:right"><span class="sub">No carrinho</span><span class="bigstat">'+done.length+'</span></div></div>'+
-    '<div class="bar" style="background:var(--hero2)"><i style="width:'+pct+'%;background:#3DD68C"></i></div></header><main class="main">';
-  h+='<section class="card mform" aria-label="Novo item"><span style="font-size:16px;font-weight:800">Adicionar item</span>'+
-    '<div class="field"><label for="sh-name">Item</label><input id="sh-name" class="input" data-sh="name" placeholder="Ex.: arroz" autocomplete="off" value="'+esc(sh.name)+'"></div>'+
-    '<div class="row"><div class="field" style="flex:1;min-width:0"><label for="sh-qty">Quantidade (opcional)</label><input id="sh-qty" class="input" data-sh="qty" placeholder="2, 1 kg, 3 pacotes" autocomplete="off" value="'+esc(sh.qty)+'"></div></div>'+
-    '<div class="field"><label for="sh-store">Onde comprar (opcional)</label><input id="sh-store" class="input" data-sh="store" placeholder="Mercado, padaria, farmácia..." autocomplete="off" value="'+esc(sh.store)+'">'+
-    (stores.length?'<div class="chips" style="margin-top:4px">'+stores.map(s_=>'<button class="chipbtn" data-a="shStore" data-v="'+esc(s_)+'" aria-pressed="'+(sh.store===s_)+'">'+esc(s_)+'</button>').join('')+'</div>':'')+'</div>'+
-    '<button class="btn green full" style="min-height:54px" data-a="shAdd">Adicionar à lista</button></section>';
   const groups={};open.forEach(x=>{const k=x.store||'';(groups[k]=groups[k]||[]).push(x);});
   const keys=Object.keys(groups).sort((a,b)=>a===''?1:b===''?-1:a.localeCompare(b,'pt-BR'));
   const row=x=>'<div class="list-item"><button class="check'+(x.done?' on':'')+'" data-a="shToggle" data-id="'+x.id+'" aria-pressed="'+!!x.done+'" aria-label="'+esc(x.name)+'">'+(x.done?ic('check',22,3):'')+'</button>'+
     '<div class="col" style="flex:1;min-width:0;gap:0"><span style="font-weight:800;overflow-wrap:anywhere;'+(x.done?'text-decoration:line-through;color:var(--muted)':'')+'">'+esc(x.name)+'</span>'+(x.done&&x.store?'<span class="small">'+esc(x.store)+'</span>':'')+'</div>'+
     (x.qty?'<span class="pill gray">'+esc(x.qty)+'</span>':'')+'<button class="iconbtn light" style="width:40px;height:40px" data-a="shDel" data-id="'+x.id+'" aria-label="Remover '+esc(x.name)+'">'+ic('x',18)+'</button></div>';
-  h+='<section class="col fullrow mlist" style="gap:10px"><div class="sec-h"><h2>Para comprar</h2><span class="meta">'+open.length+(open.length===1?' item':' itens')+'</span></div>';
-  if(!open.length)h+='<div class="card empty">'+(L.length?'Tudo comprado! Limpe a lista quando quiser.':'Sua lista está vazia. Adicione o primeiro item acima.')+'</div>';
+  let h='';
+  if(!open.length)h+='<div class="card empty">'+(L.length?'Tudo comprado! Limpe a lista quando quiser.':'Sua lista está vazia. Toque em “Adicionar item” para começar.')+'</div>';
   else h+='<div class="cgrid">'+keys.map(k=>'<div class="col" style="gap:8px"><div class="datehead" style="padding-top:0">'+(k?esc(k):'Sem local definido')+' · '+groups[k].length+'</div><div class="card tight">'+groups[k].map(row).join('')+'</div></div>').join('')+'</div>';
-  if(done.length)h+='<div class="sec-h" style="padding-top:14px"><h2>Comprados</h2><button class="btn sm ghost" data-a="shClear">Limpar comprados</button></div><div class="card tight">'+done.map(row).join('')+'</div>';
-  return h+'</section></main>';
+  if(done.length)h+='<div class="sec-h" style="padding-top:10px"><h2>Comprados</h2><button class="btn sm ghost" data-a="shClear">Limpar comprados</button></div><div class="card tight">'+done.map(row).join('')+'</div>';
+  return{stat:open.length+(open.length===1?' item para comprar':' itens para comprar')+(done.length?' · '+done.length+' no carrinho':''),lbl:'Adicionar item',h};
+}
+function viewListas(){
+  const on=listsOn(),r=ui.list==='filmes'?listFilmes():ui.list==='livros'?listLivros():listCompras();
+  return'<header class="hero heroS"><h1>Listas</h1>'+
+    (on.length>1?'<div class="seg'+(on.length===3?' three':'')+'" role="group" aria-label="Lista">'+on.map(([k,n])=>'<button data-a="list" data-v="'+k+'" aria-pressed="'+(ui.list===k)+'">'+n+'</button>').join('')+'</div>':'')+
+    '<span class="sub">'+r.stat+'</span></header><main class="main"><section class="col fullrow" style="gap:14px">'+r.h+'</section></main>'+fabHtml(r.lbl);
+}
+
+/* janelas de cadastro */
+function addSheetHtml(s){
+  const fld=(id,lab,attr,val,ph,extra)=>'<div class="field"><label for="'+id+'">'+lab+'</label><input id="'+id+'" class="input" '+attr+' placeholder="'+(ph||'')+'" autocomplete="off" '+(extra||'')+' value="'+esc(val)+'"></div>';
+  const btns=ok=>'<div class="row"><button class="btn ghost" style="flex:1" data-a="sheetClose">Cancelar</button><button class="btn green" style="flex:1" data-a="'+ok[0]+'">'+ok[1]+'</button></div>';
+  if(s.type==='addMv'){const m=ui.mv;
+    return'<h2>Novo filme</h2>'+fld('m-title','Nome do filme','data-m="title"',m.title,'Ex.: Interestelar')+coverRow('movie')+moreBtn()+
+      (ui.more?'<div class="field"><label for="m-genre">Gênero</label><select id="m-genre" class="input" data-m="genre">'+MOVIE_GENRES.map(g=>'<option'+(m.genre===g?' selected':'')+'>'+g+'</option>').join('')+'</select></div>'+
+        fld('m-where','Onde assistir','data-m="where"',m.where,'Netflix, Prime, cinema...')+fld('m-note','Anotação','data-m="note"',m.note,'Quem indicou, por que quer ver'):'')+btns(['mvAdd','Adicionar']);}
+  if(s.type==='addBk'){const b=ui.bk;
+    return'<h2>Novo livro</h2>'+fld('b-title','Título','data-bk="title"',b.title,'Ex.: Dom Casmurro')+coverRow('book')+moreBtn()+
+      (ui.more?fld('b-author','Autor','data-bk="author"',b.author,'')+fld('b-pages','Páginas','data-bk="pages"',b.pages,'','type="number" inputmode="numeric" min="0"')+fld('b-note','Anotação','data-bk="note"',b.note,'Quem indicou, por que quer ler'):'')+btns(['bkAdd','Adicionar']);}
+  if(s.type==='addSh'){const q=ui.sh,stores=[...new Set(C().shopping.map(x=>x.store).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+    return'<h2>Adicionar à lista</h2><div class="row" style="align-items:flex-end"><div class="field" style="flex:1;min-width:0"><label for="sh-name">Item</label><input id="sh-name" class="input" data-sh="name" placeholder="Ex.: arroz" autocomplete="off" value="'+esc(q.name)+'"></div>'+
+      '<div class="field" style="width:112px"><label for="sh-qty">Qtd.</label><input id="sh-qty" class="input" data-sh="qty" placeholder="2 kg" autocomplete="off" value="'+esc(q.qty)+'"></div></div>'+
+      '<div class="field"><label for="sh-store">Onde comprar</label><input id="sh-store" class="input" data-sh="store" placeholder="Mercado, padaria, farmácia..." autocomplete="off" value="'+esc(q.store)+'">'+
+      (stores.length?'<div class="chips" style="margin-top:4px">'+stores.map(s_=>'<button class="chipbtn" data-a="shStore" data-v="'+esc(s_)+'" aria-pressed="'+(q.store===s_)+'">'+esc(s_)+'</button>').join('')+'</div>':'')+'</div>'+
+      '<div class="row"><button class="btn ghost" style="flex:1" data-a="sheetClose">Concluir</button><button class="btn green" style="flex:1" data-a="shAdd">Adicionar</button></div>';}
+  if(s.type==='addExp'){const dr=ui.draft;
+    return'<h2>Novo gasto</h2><div class="field"><label for="g-val">Valor (R$)</label><input id="g-val" class="input money" inputmode="numeric" placeholder="0,00" autocomplete="off" data-mask="money" data-d="val" value="'+esc(dr.val)+'"></div>'+
+      '<div class="field"><span class="flabel">Categoria</span><div class="chips">'+C().categories.map(ct=>'<button class="chipbtn" data-a="expCat" data-v="'+esc(ct)+'" aria-pressed="'+(dr.cat===ct)+'">'+esc(ct)+'</button>').join('')+'</div></div>'+moreBtn()+
+      (ui.more?fld('g-desc','Descrição','data-d="desc"',dr.desc,'Ex.: feira da semana')+'<div class="field"><label for="g-date">Data</label><input id="g-date" class="input" type="date" max="'+todayKey()+'" data-d="date" value="'+esc(dr.date)+'"></div>':'')+btns(['expSave','Salvar gasto']);}
+  return'';
 }
 
 /* ---------- instalação como app ---------- */
@@ -909,6 +946,7 @@ function sheetHtml(){const s=ui.sheet;if(!s)return'';let b='';
   if(s.type==='rate'){const bk=s.kind==='book';const m=(bk?C().books:C().movies).find(x=>x.id===s.id);b='<h2>Como foi '+esc(m?m.title:(bk?'o livro':'o filme'))+'?</h2><p class="ptext">Toque nas estrelas para dar uma nota.</p><div class="row" style="justify-content:center;gap:6px">'+[1,2,3,4,5].map(n=>'<button class="starbtn" data-a="'+(bk?'bkRate':'mvRate')+'" data-v="'+n+'" aria-label="Nota '+n+'">'+starSvg(true,26)+'<span style="font-weight:800;margin-left:2px">'+n+'</span></button>').join('')+'</div><button class="btn soft" data-a="'+(bk?'bkRate':'mvRate')+'" data-v="0">Sem nota</button><button class="btn ghost" data-a="sheetClose">Cancelar</button>';}
   if(s.type==='pick'){const m=C().movies.find(x=>x.id===s.id);b='<h2>Que tal assistir…</h2><p class="big" style="text-align:center;padding:10px 0">'+esc(m?m.title:'')+'</p>'+(m?'<div class="chips" style="justify-content:center"><span class="pill gray">'+esc(m.genre)+'</span>'+(m.where?'<span class="pill gray">'+esc(m.where)+'</span>':'')+'</div>'+(m.note?'<span class="small" style="text-align:center">'+esc(m.note)+'</span>':''):'')+'<div class="row"><button class="btn ghost" style="flex:1" data-a="mvPick">Sortear outro</button><button class="btn green" style="flex:1" data-a="mvWatch" data-id="'+(m?m.id:'')+'">Já assisti</button></div><button class="btn soft" data-a="sheetClose">Fechar</button>';}
   if(s.type==='covers')b=covSheet();
+  if(s.type==='addMv'||s.type==='addBk'||s.type==='addSh'||s.type==='addExp')b=addSheetHtml(s);
   if(s.type==='bkText')b='<h2>Seu arquivo</h2><p class="ptext">Se o download não começou, copie o texto abaixo e guarde num arquivo ou numa nota. Para usar, escolha “Restaurar colando o texto”.</p><textarea class="input" id="bk" readonly>'+esc(s.text)+'</textarea><div class="row"><button class="btn ink" style="flex:1" data-a="copyBk">Copiar texto</button><button class="btn ghost" style="flex:1" data-a="sheetClose">Fechar</button></div>';
   if(s.type==='paste')b='<h2>Restaurar ou importar</h2><label for="pasteBk" class="small">Cole aqui o texto do arquivo</label><textarea class="input" id="pasteBk"></textarea><div class="row"><button class="btn ghost" style="flex:1" data-a="sheetClose">Cancelar</button><button class="btn ink" style="flex:1" data-a="pasteDo">Continuar</button></div>';
   return'<div class="backdrop" data-a="backdrop"><div class="sheet" role="dialog" aria-modal="true">'+b+'</div></div>';}
@@ -1010,14 +1048,17 @@ window.addEventListener('online',()=>{if(cloud.ready&&cloud.status==='offline')s
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&cloud.timer)cloudPush();});
 
 /* ================= render ================= */
-function tabs(){const t=[['hoje','Hoje','cal'],['resumo','Resumo','chart']];if(C().modules.premios)t.push(['premios','Prêmios','gift']);if(C().modules.filmes)t.push(['filmes','Filmes','film']);if(C().modules.livros)t.push(['livros','Livros','book']);if(C().modules.compras)t.push(['compras','Compras','cart']);if(C().modules.gastos)t.push(['gastos','Gastos','wallet']);t.push(['ajustes','Ajustes','gear']);return t;}
+function tabs(){const t=[['hoje','Hoje','cal']];if(listsOn().length)t.push(['listas','Listas','list']);if(C().modules.gastos)t.push(['gastos','Gastos','wallet']);t.push(['resumo','Resumo','chart'],['ajustes','Ajustes','gear']);return t;}
 function render(){
   const app=document.getElementById('app');
   if(cloud.gate){app.className='wrap solo';app.innerHTML=viewGate();return;}
-  if(ui.tab==='premios'&&!C().modules.premios)ui.tab='hoje';if(ui.tab==='gastos'&&!C().modules.gastos)ui.tab='hoje';if(ui.tab==='filmes'&&!C().modules.filmes)ui.tab='hoje';if(ui.tab==='livros'&&!C().modules.livros)ui.tab='hoje';if(ui.tab==='compras'&&!C().modules.compras)ui.tab='hoje';
+  if(['filmes','livros','compras'].includes(ui.tab)){ui.list=ui.tab;ui.tab='listas';}
+  if(ui.tab==='premios'){ui.tab='resumo';ui.rsec='premios';}
+  if(ui.tab==='gastos'&&!C().modules.gastos)ui.tab='hoje';
+  if(ui.tab==='listas'){const on=listsOn();if(!on.length)ui.tab='hoje';else if(!on.some(x=>x[0]===ui.list))ui.list=on[0][0];}
   if(ui.tab==='setup'){app.className='wrap solo';app.innerHTML=viewSetup()+sheetHtml();return;}
   app.className='wrap hasnav';const c=compute();const t=tabs();
-  const v=ui.tab==='hoje'?viewHoje(c):ui.tab==='resumo'?viewResumo(c):ui.tab==='premios'?viewPremios(c):ui.tab==='gastos'?viewGastos():ui.tab==='filmes'?viewFilmes():ui.tab==='livros'?viewLivros():ui.tab==='compras'?viewCompras():viewAjustes();
+  const v=ui.tab==='hoje'?viewHoje(c):ui.tab==='listas'?viewListas():ui.tab==='gastos'?viewGastos()+fabHtml('Novo gasto'):ui.tab==='resumo'?(ui.rsec==='premios'&&pts()?viewPremios(c):viewResumo(c)):viewAjustes();
   app.innerHTML=v+'<nav class="tabs" aria-label="Seções"><div class="brand"><i>'+ic('cal',22)+'</i>Minha Rotina</div><div class="in'+(t.length>6?' scroll':'')+'" style="grid-template-columns:repeat('+t.length+',minmax(0,1fr))">'+t.map(([k,n,i])=>'<button data-a="tab" data-v="'+k+'" '+(ui.tab===k?'aria-current="page"':'')+'>'+ic(i,24)+n+'</button>').join('')+'</div></nav>'+sheetHtml();
   const nv=app.querySelector('nav.tabs .in.scroll');if(nv){const a=nv.querySelector('[aria-current]');if(a)nv.scrollLeft=a.offsetLeft-nv.clientWidth/2+a.offsetWidth/2;}
   checkAch(c);
@@ -1150,7 +1191,7 @@ document.addEventListener('click',e=>{
     /* gastos */
     case'expCat':ui.draft.cat=v;render();break;
     case'expSave':{const dr=ui.draft,x=parseMoney(dr.val);if(!(x>0)){toast('Digite o valor, ex.: 25,90');break;}if(!dr.cat){toast('Escolha uma categoria');break;}
-      DT().expenses.push({id:uid(),value:x,cat:dr.cat,desc:dr.desc.trim(),date:dr.date||T});ui.moff=0;ui.draft={val:'',cat:null,desc:'',date:T};save();render();toast('Gasto de '+money(x)+' salvo');break;}
+      DT().expenses.push({id:uid(),value:x,cat:dr.cat,desc:dr.desc.trim(),date:dr.date||T});ui.moff=0;ui.draft={val:'',cat:null,desc:'',date:T};ui.sheet=null;save();render();toast('Gasto de '+money(x)+' salvo');break;}
     case'expDel':{const x=DT().expenses.find(e=>e.id===id);if(x)ask('Apagar este gasto?',(x.desc||x.cat)+' · '+money(x.value),'Apagar',()=>{DT().expenses=DT().expenses.filter(e=>e.id!==id);},true);break;}
     case'recConfirm':{const r=pendingRecurring().find(x=>x.id===id);if(!r)break;const inp=document.getElementById('rv-'+id);const x=parseMoney(inp?inp.value:r.value);if(!(x>0)){toast('Valor inválido');break;}
       DT().expenses.push({id:uid(),value:x,cat:r.cat,desc:r.desc,date:r.date,rec:true});DT().recLast[id]=monthKey(T);save();render();toast(r.desc+' lançado');break;}
@@ -1161,6 +1202,18 @@ document.addEventListener('click',e=>{
       C().recurring.push({id:uid(),desc:r.desc.trim(),value:x,cat:r.cat,day:dd});ui.rec={desc:'',val:'',cat:null,day:''};save();render();toast('Recorrente adicionado');break;}
     case'recDel':C().recurring=C().recurring.filter(x=>x.id!==id);save();render();break;
     /* ajustes */
+    /* navegação nova */
+    case'list':ui.list=v;render();try{window.scrollTo(0,0);}catch(_){}break;
+    case'rsec':ui.rsec=v;render();try{window.scrollTo(0,0);}catch(_){}break;
+    case'more':ui.more=!ui.more;render();break;
+    case'toggleDone':ui.showDone=!ui.showDone;render();break;
+    case'covClose':covBack();render();break;
+    case'addOpen':{ui.more=false;
+      if(ui.tab==='gastos'){ui.draft={val:'',cat:null,desc:'',date:T};ui.sheet={type:'addExp'};}
+      else if(ui.list==='filmes'){ui.mv={title:'',genre:ui.mv.genre,where:'',note:'',cover:''};ui.sheet={type:'addMv'};}
+      else if(ui.list==='livros'){ui.bk={title:'',author:'',pages:'',note:'',cover:''};ui.sheet={type:'addBk'};}
+      else{ui.sh={name:'',qty:'',store:''};ui.sheet={type:'addSh'};}
+      render();setTimeout(()=>{const el=document.querySelector('.sheet input.input');if(el)el.focus();},80);break;}
     /* ícone do hábito */
     case'eIcon':ui.edit.icon=v;render();break;
     /* instalar */
@@ -1173,16 +1226,16 @@ document.addEventListener('click',e=>{
     case'covPick':{const cv=ui.cov,r=cv&&cv.results&&cv.results[+t.dataset.i];if(!r)break;
       if(cv.target==='new'){if(cv.kind==='book'){ui.bk.cover=r.img;ui.bk.title=r.title;if(r.author)ui.bk.author=r.author;if(r.pages)ui.bk.pages=String(r.pages);}else{ui.mv.cover=r.img;ui.mv.title=r.title;}}
       else{const it=(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target);if(it){it.cover=r.img;if(cv.kind==='book'){if(!it.author&&r.author)it.author=r.author;if(!(+it.pages)&&r.pages)it.pages=+r.pages;}save();}}
-      ui.sheet=null;ui.cov=null;render();toast('Capa escolhida');break;}
+      covBack();render();toast('Capa escolhida');break;}
     case'covRemove':{const cv=ui.cov;if(!cv)break;
       if(cv.target==='new'){(cv.kind==='book'?ui.bk:ui.mv).cover='';}
       else{const it=(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target);if(it){delete it.cover;save();}}
-      ui.sheet=null;ui.cov=null;render();break;}
+      covBack();render();break;}
     /* livros */
     case'bFilter':ui.bfilter=v;render();break;
     case'bkAdd':{const b=ui.bk;if(!b.title.trim()){toast('Escreva o título do livro');break;}
       C().books.push({id:uid(),title:b.title.trim(),author:b.author.trim(),pages:Math.max(0,Math.round(+b.pages||0)),note:b.note.trim(),cover:b.cover||'',status:'want',page:0,rating:0,added:T});
-      ui.bk={title:'',author:'',pages:'',note:'',cover:''};save();render();toast('Livro adicionado');break;}
+      ui.bk={title:'',author:'',pages:'',note:'',cover:''};ui.sheet=null;save();render();toast('Livro adicionado');break;}
     case'bkStart':{const b=C().books.find(x=>x.id===id);if(b){b.status='reading';b.startedAt=T;save();render();toast('Boa leitura!');}break;}
     case'bkFinish':ui.sheet={type:'rate',kind:'book',id};render();break;
     case'bkRate':{const b=C().books.find(x=>x.id===ui.sheet.id);if(b){b.status='read';b.rating=+v||0;b.finishedAt=T;if(+b.pages)b.page=+b.pages;}ui.sheet=null;save();render();toast('Livro concluído. Parabéns!');break;}
@@ -1193,7 +1246,7 @@ document.addEventListener('click',e=>{
     case'shStore':ui.sh.store=ui.sh.store===v?'':v;render();break;
     case'shAdd':{const q=ui.sh;if(!q.name.trim()){toast('Escreva o item');break;}
       C().shopping.push({id:uid(),name:q.name.trim(),qty:q.qty.trim(),store:q.store.trim(),done:false});
-      ui.sh={name:'',qty:'',store:q.store};save();render();setTimeout(()=>{const el=document.getElementById('sh-name');if(el)el.focus();},0);break;}
+      ui.sh={name:'',qty:'',store:q.store};save();render();toast('“'+q.name.trim()+'” adicionado');setTimeout(()=>{const el=document.getElementById('sh-name');if(el)el.focus();},0);break;}
     case'shToggle':{const x=C().shopping.find(y=>y.id===id);if(x){x.done=!x.done;save();render();}break;}
     case'shDel':C().shopping=C().shopping.filter(y=>y.id!==id);save();render();break;
     case'shClear':ask('Limpar comprados?','Remove da lista os itens já marcados.','Limpar',()=>{C().shopping=C().shopping.filter(y=>!y.done);},false,true);break;
@@ -1202,7 +1255,7 @@ document.addEventListener('click',e=>{
     case'mvGenre':ui.mv.genre=v;render();break;
     case'mvAdd':{const m=ui.mv;if(!m.title.trim()){toast('Escreva o nome do filme');break;}
       C().movies.push({id:uid(),title:m.title.trim(),genre:m.genre,where:m.where.trim(),note:m.note.trim(),cover:m.cover||'',added:T,watched:false,rating:0});
-      ui.mv={title:'',genre:m.genre,where:'',note:'',cover:''};save();render();toast('Filme adicionado');break;}
+      ui.mv={title:'',genre:m.genre,where:'',note:'',cover:''};ui.sheet=null;save();render();toast('Filme adicionado');break;}
     case'mvWatch':ui.sheet={type:'rate',id};render();break;
     case'mvRate':{const m=C().movies.find(x=>x.id===ui.sheet.id);if(m){m.watched=true;m.rating=+v||0;m.watchedAt=T;}ui.sheet=null;save();render();toast('Boa! Movido para os assistidos');break;}
     case'mvUndo':{const m=C().movies.find(x=>x.id===id);if(m){m.watched=false;m.rating=0;delete m.watchedAt;save();render();}break;}
@@ -1242,7 +1295,7 @@ document.addEventListener('change',e=>{const t=e.target;
   if(t.dataset.restore){const f=t.files&&t.files[0];if(!f)return;const r=new FileReader();r.onload=()=>tryRestore(String(r.result));r.readAsText(f);t.value='';}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.sheet){ui.sheet=null;render();return;}
-  if(e.key==='Enter'){const t=e.target;if(t.id==='cv-q'&&ui.cov){e.preventDefault();ui.cov.q=t.value;covSearch();}else if(t.dataset&&t.dataset.sh!==undefined){e.preventDefault();const b=document.querySelector('[data-a="shAdd"]');if(b)b.click();}}});
+  if(e.key==='Enter'){const t=e.target;if(t.id==='cv-q'&&ui.cov){e.preventDefault();ui.cov.q=t.value;covSearch();}else if(t.tagName==='INPUT'&&t.type!=='date'&&t.type!=='number'&&t.dataset){const mp={m:'mvAdd',bk:'bkAdd',sh:'shAdd',d:'expSave'};const kk=Object.keys(mp).find(x=>t.dataset[x]!==undefined);if(kk){e.preventDefault();const b=document.querySelector('.sheet [data-a="'+mp[kk]+'"]');if(b)b.click();}}}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(ui.sel>todayKey())ui.sel=todayKey();render();}});
 let lastDay=todayKey();setInterval(()=>{const t=todayKey();if(t!==lastDay){if(ui.sel===lastDay)ui.sel=t;lastDay=t;render();}},30000);
 applyTheme();cloudBoot();
