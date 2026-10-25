@@ -261,6 +261,8 @@ nav.tabs button[aria-current="page"] svg{color:var(--green)}
 .covitem img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px;background:var(--soft)}
 .covitem b{font-size:12px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .covitem small{font-size:11px;color:var(--muted);font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.cvbox{position:relative;aspect-ratio:2/3;border-radius:8px;background:var(--soft);color:var(--muted);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.covitem .cvbox img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;border-radius:0;object-fit:cover}
 @media (hover:hover){.covitem:hover{border-color:var(--ink)}}
 .seg.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .seg.three button{font-size:13px;padding:0 4px}
@@ -894,17 +896,35 @@ const posterHtml=(it,col,soft,icn)=>'<span class="poster" style="background:'+so
 /* ---------- busca de capas ---------- */
 async function jget(u){const r=await fetch(u);if(!r.ok)throw new Error('http '+r.status);return r.json();}
 const httpsImg=u=>u?String(u).replace(/^http:/,'https:').replace('&edge=curl',''):'';
-async function searchBooks(q){let out=[],fails=0;
-  try{const j=await jget('https://www.googleapis.com/books/v1/volumes?maxResults=12&printType=books&q='+encodeURIComponent(q));
-    out=(j.items||[]).map(it=>{const v=it.volumeInfo||{},im=v.imageLinks||{},au=(v.authors||[]).join(', ');
-      return{title:(v.title||'')+(v.subtitle?': '+v.subtitle:''),author:au,pages:v.pageCount||'',img:httpsImg(im.thumbnail||im.smallThumbnail),sub:[au,(v.publishedDate||'').slice(0,4)].filter(Boolean).join(' · ')};}).filter(x=>x.title&&x.img);}
-  catch(e){fails++;}
-  if(out.length<4){try{const j=await jget('https://openlibrary.org/search.json?limit=12&fields=title,author_name,cover_i,number_of_pages_median,first_publish_year&q='+encodeURIComponent(q));
-    (j.docs||[]).filter(d=>d.cover_i).forEach(d=>{const au=(d.author_name||[]).join(', ');
-      out.push({title:d.title,author:au,pages:d.number_of_pages_median||'',img:'https://covers.openlibrary.org/b/id/'+d.cover_i+'-M.jpg',sub:[au,d.first_publish_year].filter(Boolean).join(' · ')});});}
-    catch(e){fails++;}}
-  if(!out.length&&fails>=2)throw new Error('rede');
-  return out.slice(0,12);}
+const normT=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+const IMGERR="if(this.dataset.alt){var a=this.dataset.alt;this.removeAttribute('data-alt');this.src=a}else{this.remove()}";
+async function searchBooks(q){
+  const qq=q.trim(),pr=qq.split(/\s*(?:,| - )\s*/);
+  const gq=pr.length===2&&pr[0]&&pr[1]?'intitle:'+pr[0]+' inauthor:'+pr[1]:qq,E=encodeURIComponent;
+  const G='https://www.googleapis.com/books/v1/volumes?printType=books&q='+E(gq);
+  const gmap=j=>(j.items||[]).map(it=>{const v=it.volumeInfo||{},im=v.imageLinks||{},au=(v.authors||[]).join(', '),ids=v.industryIdentifiers||[],
+      isbn=(ids.find(x=>x.type==='ISBN_13')||ids[0]||{}).identifier||'',own=httpsImg(im.thumbnail||im.smallThumbnail),
+      alt=isbn?'https://covers.openlibrary.org/b/isbn/'+isbn+'-M.jpg?default=false':'';
+    return{title:(v.title||'')+(v.subtitle?': '+v.subtitle:''),author:au,pages:v.pageCount||'',img:own||alt,alt:own?alt:'',lang:v.language||'',year:(v.publishedDate||'').slice(0,4),pub:v.publisher||''};}).filter(x=>x.title);
+  const OF='&fields=title,author_name,cover_i,cover_edition_key,number_of_pages_median,first_publish_year&limit=12';
+  const omap=j=>(j.docs||[]).map(d=>{const au=(d.author_name||[]).join(', ');
+    return{title:d.title,author:au,pages:d.number_of_pages_median||'',img:d.cover_i?'https://covers.openlibrary.org/b/id/'+d.cover_i+'-M.jpg':d.cover_edition_key?'https://covers.openlibrary.org/b/olid/'+d.cover_edition_key+'-M.jpg?default=false':'',alt:'',lang:'',year:d.first_publish_year||'',pub:''};}).filter(x=>x.title);
+  const rs=await Promise.allSettled([
+    jget(G+'&langRestrict=pt&maxResults=20').then(gmap),
+    jget(G+'&maxResults=12').then(gmap),
+    jget('https://openlibrary.org/search.json?language=por'+OF+'&q='+E(qq)).then(omap),
+    jget('https://openlibrary.org/search.json?'+OF.slice(1)+'&q='+E(qq)).then(omap),
+    jget('https://openlibrary.org/search.json?language=por'+OF+'&title='+E(pr[0])).then(omap),
+    jget('https://www.googleapis.com/books/v1/volumes?printType=books&maxResults=15&langRestrict=pt&q='+E(pr.length===2?qq.replace(/\s*(?:,| - )\s*/,' '):'intitle:'+qq)).then(gmap)]);
+  if(rs.every(r=>r.status==='rejected'))throw new Error('rede');
+  const all=[].concat(...rs.map(r=>r.status==='fulfilled'?r.value:[])),map=new Map();
+  all.forEach(x=>{const k=normT(x.title)+'|'+normT((x.author||'').split(',')[0]),o=map.get(k);
+    if(!o){map.set(k,x);return;}
+    if(!o.img&&x.img){o.img=x.img;o.alt=x.alt;}
+    if(!o.pages&&x.pages)o.pages=x.pages;if(!o.lang&&x.lang)o.lang=x.lang;if(!o.year&&x.year)o.year=x.year;});
+  const pt=x=>/^pt/i.test(x.lang)?0:1;
+  return[...map.values()].map((x,i)=>({x,i})).sort((a,b)=>pt(a.x)-pt(b.x)||(!a.x.img-!b.x.img)||a.i-b.i).map(o=>o.x).slice(0,18)
+    .map(x=>({...x,sub:[x.author,x.year,/^pt/i.test(x.lang)?'Português':'',x.pub,x.img?'':'sem capa'].filter(Boolean).join(' · ')}));}
 async function searchMovies(q){const key=(C().tmdbKey||'').trim();
   if(key){const j=await jget('https://api.themoviedb.org/3/search/multi?include_adult=false&language=pt-BR&api_key='+encodeURIComponent(key)+'&query='+encodeURIComponent(q));
     return(j.results||[]).filter(r=>(r.media_type==='movie'||r.media_type==='tv')&&r.poster_path).slice(0,12).map(r=>({title:r.title||r.name,img:'https://image.tmdb.org/t/p/w342'+r.poster_path,sub:[(r.release_date||r.first_air_date||'').slice(0,4),r.media_type==='tv'?'série':''].filter(Boolean).join(' · ')}));}
@@ -915,15 +935,32 @@ async function covSearch(){const cv=ui.cov;if(!cv)return;if(!cv.q.trim()){toast(
   try{cv.results=cv.kind==='book'?await searchBooks(cv.q):await searchMovies(cv.q);if(!cv.results.length)cv.err='Nada encontrado. Tente outro título ou só parte do nome.';}
   catch(e){cv.results=[];cv.err='Não consegui buscar agora. Verifique a internet e tente de novo.';}
   cv.loading=false;if(ui.cov===cv&&ui.sheet&&ui.sheet.type==='covers')render();}
-function covBack(){const cv=ui.cov;ui.sheet=cv&&cv.target==='new'?{type:cv.kind==='book'?'addBk':'addMv'}:null;ui.cov=null;}
+function covBack(){const cv=ui.cov;ui.sheet=cv&&cv.target==='new'?{type:cv.kind==='book'?'addBk':'addMv'}:cv&&cv.from==='edit'&&ui.be?{type:'editBk',id:cv.target}:null;ui.cov=null;}
+function covApply(url){const cv=ui.cov;if(!cv||!url)return;
+  if(cv.target==='new')(cv.kind==='book'?ui.bk:ui.mv).cover=url;
+  else{const it=(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target);if(it){it.cover=url;save();}}
+  covBack();render();toast('Capa salva');}
+function covLinkGo(){const cv=ui.cov;if(!cv)return;const u=(cv.link||'').trim();if(!/^https?:\/\//i.test(u)){toast('Cole um link que comece com http');return;}covApply(httpsImg(u));}
+function covFile(f){const fr=new FileReader();fr.onerror=()=>toast('Não consegui ler a imagem');
+  fr.onload=()=>{const im=new Image();im.onerror=()=>toast('Esse formato de imagem não é aceito');
+    im.onload=()=>{const W=300,H=450,r=im.width/im.height,tr=W/H;let sw=im.width,sh=im.height,sx=0,sy=0;
+      if(r>tr){sw=im.height*tr;sx=(im.width-sw)/2;}else{sh=im.width/tr;sy=(im.height-sh)/2;}
+      const cn=document.createElement('canvas');cn.width=W;cn.height=H;const x=cn.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);x.drawImage(im,sx,sy,sw,sh,0,0,W,H);
+      covApply(cn.toDataURL('image/jpeg',.78));};im.src=String(fr.result);};fr.readAsDataURL(f);}
+function editBkSheet(){const e=ui.be,it=e&&C().books.find(x=>x.id===e.id);if(!it)return'';
+  return'<h2>Editar livro</h2>'+fld('be-title','Título','data-be="title"',e.title,'')+fld('be-author','Autor','data-be="author"',e.author,'')+fld('be-pages','Páginas','data-be="pages"',e.pages,'','type="number" inputmode="numeric" min="0"')+fld('be-note','Anotação','data-be="note"',e.note,'')+
+    '<div class="field"><span class="flabel">Capa</span><div class="row">'+(it.cover?'<img class="cvthumb" src="'+esc(it.cover)+'" alt="Capa atual" referrerpolicy="no-referrer">':'')+'<button class="btn sm soft" style="flex:1" data-a="covOpen" data-k="book" data-id="'+it.id+'" data-from="edit">'+ic('image',18)+(it.cover?'Trocar capa':'Buscar capa')+'</button></div><span class="small">A busca mostra as edições em português primeiro e também troca o título, se você quiser.</span></div>'+
+    '<div class="row"><button class="btn ghost" style="flex:1" data-a="sheetClose">Cancelar</button><button class="btn green" style="flex:1" data-a="beSave">Salvar</button></div>';}
 function covSheet(){const cv=ui.cov;if(!cv)return'';
   const cur=cv.target==='new'?(cv.kind==='book'?ui.bk:ui.mv):(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target)||{};
   let b='<h2>Buscar capa</h2><div class="row"><label class="vh" for="cv-q">Título</label><input id="cv-q" class="input" data-cq="1" value="'+esc(cv.q)+'" placeholder="Título" style="flex:1;min-width:0"><button class="btn ink" data-a="covGo">Buscar</button></div>';
   if(cv.loading)b+='<span class="small">Buscando…</span>';
   else if(cv.err)b+='<span class="small">'+esc(cv.err)+'</span>';
-  else if(cv.results)b+='<span class="small">Toque na capa certa.</span>';
-  if(cv.results&&cv.results.length)b+='<div class="covgrid">'+cv.results.map((r,i)=>'<button class="covitem" data-a="covPick" data-i="'+i+'"><img src="'+esc(r.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer"><b>'+esc(r.title)+'</b><small>'+esc(r.sub)+'</small></button>').join('')+'</div>';
+  else if(cv.results)b+='<span class="small">'+(cv.kind==='book'?'Toque na edição certa: a capa e o título dela serão usados. Os em português aparecem primeiro.':'Toque na capa certa.')+'</span>'+(cv.kind==='book'?'<div class="chips"><button class="chipbtn" data-a="covKeep" aria-pressed="'+!!cv.keep+'">Manter o título que escrevi</button></div>':'');
+  if(cv.results&&cv.results.length)b+='<div class="covgrid">'+cv.results.map((r,i)=>'<button class="covitem" data-a="covPick" data-i="'+i+'"><span class="cvbox">'+ic(cv.kind==='book'?'book':'film',28)+(r.img?'<img src="'+esc(r.img)+'" data-alt="'+esc(r.alt||'')+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="'+IMGERR+'">':'')+'</span><b>'+esc(r.title)+'</b><small>'+esc(r.sub)+'</small></button>').join('')+'</div>';
   if(cv.kind==='movie'&&!(C().tmdbKey||'').trim())b+='<span class="small">Dica: para achar séries e mais títulos, adicione uma chave grátis do TMDB em Ajustes.</span>';
+  b+='<div class="field" style="margin-top:6px"><span class="flabel">Não achou? Use sua própria capa</span><div class="row"><label class="btn soft" style="flex:1;cursor:pointer" for="cv-file">'+ic('image',18)+'Foto ou galeria</label><input id="cv-file" class="vh" type="file" accept="image/*" data-covfile="1"></div>'+
+    '<div class="row"><label class="vh" for="cv-link">Link da imagem</label><input id="cv-link" class="input" inputmode="url" data-cl="1" placeholder="Ou cole o link de uma imagem" value="'+esc(cv.link||'')+'" style="flex:1;min-width:0"><button class="btn ink" data-a="covLink">Usar</button></div></div>';
   if(cur.cover)b+='<button class="btn danger" data-a="covRemove">Remover capa</button>';
   return b+'<button class="btn ghost" data-a="covClose">Voltar</button>';}
 
@@ -971,6 +1008,7 @@ function listLivros(){
       '<div class="row">'+(bk.status==='want'?'<button class="btn sm green" style="flex:1" data-a="bkStart" data-id="'+bk.id+'">Começar a ler</button>':
         bk.status==='reading'?'<button class="btn sm green" style="flex:1" data-a="bkFinish" data-id="'+bk.id+'">Terminei</button><button class="btn sm soft" data-a="bkToWant" data-id="'+bk.id+'">Voltar à fila</button>':
         '<button class="btn sm soft" style="flex:1" data-a="bkToReading" data-id="'+bk.id+'">Reabrir</button>')+
+      '<button class="iconbtn light" style="width:40px;height:40px" data-a="bkEdit" data-id="'+bk.id+'" aria-label="Editar '+esc(bk.title)+'">'+ic('pencil',18)+'</button>'+
       '<button class="iconbtn light" style="width:40px;height:40px" data-a="covOpen" data-k="book" data-id="'+bk.id+'" aria-label="Buscar capa de '+esc(bk.title)+'">'+ic('image',18)+'</button>'+
       '<button class="iconbtn light" style="width:40px;height:40px" data-a="bkDel" data-id="'+bk.id+'" aria-label="Remover '+esc(bk.title)+'">'+ic('trash',18)+'</button></div></article>';}).join('')+'</div>';
   return{stat:by('reading').length+' lendo · '+ry+(ry===1?' lido':' lidos')+' em '+yr,lbl:'Novo livro',h};
@@ -1180,6 +1218,7 @@ function sheetHtml(){const s=ui.sheet;if(!s)return'';let b='';
   if(s.type==='rate'){const bk=s.kind==='book';const m=(bk?C().books:C().movies).find(x=>x.id===s.id);b='<h2>Como foi '+esc(m?m.title:(bk?'o livro':'o filme'))+'?</h2><p class="ptext">Toque nas estrelas para dar uma nota.</p><div class="row" style="justify-content:center;gap:6px">'+[1,2,3,4,5].map(n=>'<button class="starbtn" data-a="'+(bk?'bkRate':'mvRate')+'" data-v="'+n+'" aria-label="Nota '+n+'">'+starSvg(true,26)+'<span style="font-weight:800;margin-left:2px">'+n+'</span></button>').join('')+'</div><button class="btn soft" data-a="'+(bk?'bkRate':'mvRate')+'" data-v="0">Sem nota</button><button class="btn ghost" data-a="sheetClose">Cancelar</button>';}
   if(s.type==='pick'){const m=C().movies.find(x=>x.id===s.id);b='<h2>Que tal assistir…</h2><p class="big" style="text-align:center;padding:10px 0">'+esc(m?m.title:'')+'</p>'+(m?'<div class="chips" style="justify-content:center"><span class="pill gray">'+esc(m.genre)+'</span>'+(m.where?'<span class="pill gray">'+esc(m.where)+'</span>':'')+'</div>'+(m.note?'<span class="small" style="text-align:center">'+esc(m.note)+'</span>':''):'')+'<div class="row"><button class="btn ghost" style="flex:1" data-a="mvPick">Sortear outro</button><button class="btn green" style="flex:1" data-a="mvWatch" data-id="'+(m?m.id:'')+'">Já assisti</button></div><button class="btn soft" data-a="sheetClose">Fechar</button>';}
   if(s.type==='covers')b=covSheet();
+  if(s.type==='editBk')b=editBkSheet();
   {const ms=moreSheets(s);if(ms)b=ms;}
   if(/^add(Mv|Bk|Sh|Exp|Tk|Dt)$/.test(s.type))b=addSheetHtml(s);
   if(s.type==='bkText')b='<h2>Seu arquivo</h2><p class="ptext">Se o download não começou, copie o texto abaixo e guarde num arquivo ou numa nota. Para usar, escolha “Restaurar colando o texto”.</p><textarea class="input" id="bk" readonly>'+esc(s.text)+'</textarea><div class="row"><button class="btn ink" style="flex:1" data-a="copyBk">Copiar texto</button><button class="btn ghost" style="flex:1" data-a="sheetClose">Fechar</button></div>';
@@ -1515,12 +1554,20 @@ document.addEventListener('click',e=>{
     /* capas */
     case'covOpen':{const kind=t.dataset.k,tg=id||'new';
       const item=tg==='new'?(kind==='book'?ui.bk:ui.mv):(kind==='book'?C().books:C().movies).find(x=>x.id===tg);if(!item)break;
-      ui.cov={kind,target:tg,q:item.title||'',loading:false,results:null,err:''};ui.sheet={type:'covers'};render();if(ui.cov.q.trim())covSearch();break;}
+      const fe=t.dataset.from==='edit'&&ui.be&&ui.be.id===tg;ui.cov={kind,target:tg,from:fe?'edit':'',link:'',q:(fe?ui.be.title:item.title)||'',loading:false,results:null,err:''};ui.sheet={type:'covers'};render();if(ui.cov.q.trim())covSearch();break;}
+    case'covKeep':if(ui.cov){ui.cov.keep=!ui.cov.keep;render();}break;
     case'covGo':{const el=document.getElementById('cv-q');if(el&&ui.cov)ui.cov.q=el.value;covSearch();break;}
     case'covPick':{const cv=ui.cov,r=cv&&cv.results&&cv.results[+t.dataset.i];if(!r)break;
-      if(cv.target==='new'){if(cv.kind==='book'){ui.bk.cover=r.img;ui.bk.title=r.title;if(r.author)ui.bk.author=r.author;if(r.pages)ui.bk.pages=String(r.pages);}else{ui.mv.cover=r.img;ui.mv.title=r.title;}}
-      else{const it=(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target);if(it){it.cover=r.img;if(cv.kind==='book'){if(!it.author&&r.author)it.author=r.author;if(!(+it.pages)&&r.pages)it.pages=+r.pages;}save();}}
-      covBack();render();toast('Capa escolhida');break;}
+      const im=t.querySelector('img'),url=im?(im.currentSrc||im.src):'';
+      if(cv.target==='new'){if(cv.kind==='book'){if(url)ui.bk.cover=url;if(!cv.keep||!ui.bk.title.trim())ui.bk.title=r.title;if(r.author)ui.bk.author=r.author;if(r.pages)ui.bk.pages=String(r.pages);}else{if(url)ui.mv.cover=url;ui.mv.title=r.title;}}
+      else{const it=(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target);if(it){if(url)it.cover=url;
+        if(cv.kind==='book'){if(r.title&&!cv.keep)it.title=r.title;if(!it.author&&r.author)it.author=r.author;if(!(+it.pages)&&r.pages)it.pages=+r.pages;
+          if(ui.be&&ui.be.id===it.id){ui.be.title=it.title;ui.be.author=it.author||'';ui.be.pages=String(it.pages||'');}}save();}}
+      covBack();render();toast(url?'Capa escolhida':'Título escolhido, sem capa');break;}
+    case'covLink':covLinkGo();break;
+    case'bkEdit':{const b=C().books.find(x=>x.id===id);if(!b)break;ui.be={id:b.id,title:b.title||'',author:b.author||'',pages:b.pages?String(b.pages):'',note:b.note||''};ui.sheet={type:'editBk'};render();break;}
+    case'beSave':{const e=ui.be,b=e&&C().books.find(x=>x.id===e.id);if(!b)break;if(!e.title.trim()){toast('Escreva o título do livro');break;}
+      b.title=e.title.trim();b.author=(e.author||'').trim();b.pages=Math.max(0,Math.round(+e.pages||0));b.note=(e.note||'').trim();ui.sheet=null;ui.be=null;save();render();toast('Livro atualizado');break;}
     case'covRemove':{const cv=ui.cov;if(!cv)break;
       if(cv.target==='new'){(cv.kind==='book'?ui.bk:ui.mv).cover='';}
       else{const it=(cv.kind==='book'?C().books:C().movies).find(x=>x.id===cv.target);if(it){delete it.cover;save();}}
@@ -1580,6 +1627,8 @@ document.addEventListener('input',e=>{const t=e.target;
   if(t.dataset.sl&&ui.sl)ui.sl[t.dataset.sl]=t.value;
   if(t.dataset.ps&&ui.ps)ui.ps[t.dataset.ps]=t.value;
   if(t.dataset.bk)ui.bk[t.dataset.bk]=t.value;
+  if(t.dataset.be&&ui.be)ui.be[t.dataset.be]=t.value;
+  if(t.dataset.cl&&ui.cov)ui.cov.link=t.value;
   if(t.dataset.sh)ui.sh[t.dataset.sh]=t.value;
   if(t.dataset.cq&&ui.cov)ui.cov.q=t.value;
   if(t.dataset.tmdb){C().tmdbKey=t.value.trim();save();}
@@ -1588,6 +1637,7 @@ document.addEventListener('input',e=>{const t=e.target;
   if(t.dataset.set&&t.dataset.str){C()[t.dataset.set]=t.value.trim().slice(0,30);save();}
 });
 document.addEventListener('change',e=>{const t=e.target;
+  if(t.dataset.covfile){const f=t.files&&t.files[0];if(f&&ui.cov)covFile(f);t.value='';return;}
   if(t.dataset.sl&&ui.sl){ui.sl.date=t.value;render();return;}
   if(t.dataset.pg){const b=C().books.find(x=>x.id===t.dataset.pg);if(b){const pg=+b.pages||0;let n=Math.max(0,Math.round(+t.value||0));if(pg)n=Math.min(n,pg);b.page=n;save();render();}return;}
   if(t.dataset.set&&!t.dataset.str){const n=Number(t.value);if(!isFinite(n)||n<0)return;const p=t.dataset.set.split('.');
@@ -1595,7 +1645,7 @@ document.addEventListener('change',e=>{const t=e.target;
   if(t.dataset.restore){const f=t.files&&t.files[0];if(!f)return;const r=new FileReader();r.onload=()=>tryRestore(String(r.result));r.readAsText(f);t.value='';}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.sheet){ui.sheet=null;render();return;}
-  if(e.key==='Enter'){const t=e.target;if(t.id==='cv-q'&&ui.cov){e.preventDefault();ui.cov.q=t.value;covSearch();}else if(t.tagName==='INPUT'&&t.type!=='date'&&t.type!=='number'&&t.dataset){const mp={m:'mvAdd',bk:'bkAdd',sh:'shAdd',d:'expSave',tk:'tkAdd',dt:'dtAdd',av:'avSave'};const kk=Object.keys(mp).find(x=>t.dataset[x]!==undefined);if(kk){e.preventDefault();const b=document.querySelector('.sheet [data-a="'+mp[kk]+'"]');if(b)b.click();}}}});
+  if(e.key==='Enter'){const t=e.target;if(t.id==='cv-q'&&ui.cov){e.preventDefault();ui.cov.q=t.value;covSearch();}else if(t.id==='cv-link'&&ui.cov){e.preventDefault();ui.cov.link=t.value;covLinkGo();}else if(t.tagName==='INPUT'&&t.type!=='date'&&t.type!=='number'&&t.dataset){const mp={m:'mvAdd',bk:'bkAdd',sh:'shAdd',d:'expSave',tk:'tkAdd',dt:'dtAdd',av:'avSave',be:'beSave'};const kk=Object.keys(mp).find(x=>t.dataset[x]!==undefined);if(kk){e.preventDefault();const b=document.querySelector('.sheet [data-a="'+mp[kk]+'"]');if(b)b.click();}}}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(ui.sel>todayKey())ui.sel=todayKey();render();}});
 let lastDay=todayKey();setInterval(()=>{const t=todayKey();if(t!==lastDay){if(ui.sel===lastDay)ui.sel=t;lastDay=t;render();}},30000);
 applyTheme();cloudBoot();
