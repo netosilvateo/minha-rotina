@@ -1,5 +1,5 @@
 /* Service worker do Minha Rotina: rede primeiro (para sempre pegar a versão nova), cache como reserva offline. */
-const V = 'minha-rotina-v3';
+const V = 'minha-rotina-v4';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
