@@ -395,6 +395,32 @@ body{background-image:none}
   .main>.pgroup .pbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
   .phead .pn{font-size:24px}
 }
+/* terço */
+.rosbtn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:none;background:var(--ink);color:var(--bg);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow)}
+.rosbtn .tile{background:rgba(255,255,255,.14);color:var(--bg)}
+.rosbtn .col{flex:1;gap:1px;min-width:0}.rosbtn b{font-family:var(--display);font-size:19px}.rosbtn span.s{font-size:13px;opacity:.75;font-weight:600}
+.rosary{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.rtop{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 8px;max-width:720px;width:100%;margin:0 auto}
+.rtop .rt{font-weight:800;color:var(--muted)}
+.rprog{height:4px;background:var(--soft);max-width:720px;width:calc(100% - 28px);margin:0 auto;border-radius:4px;overflow:hidden}.rprog i{display:block;height:100%;background:var(--green);transition:width .2s}
+.rbody{flex:1;overflow-y:auto;padding:14px 18px 28px;max-width:720px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.rbody.mid{justify-content:center}
+.rh{font-family:var(--display);font-size:32px;line-height:1.1;margin:0;letter-spacing:-.02em}
+.rsub{margin:0;color:var(--muted);font-weight:600}
+.rstep{display:flex;flex-direction:column;gap:12px}
+.rph{font-size:13px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+.rname{font-family:var(--display);font-size:24px;margin:0;line-height:1.2}
+.rref{font-weight:700;color:var(--muted)}
+.rmed{font-size:20px;line-height:1.55;margin:4px 0 0}
+.rtext{font-size:22px;line-height:1.6;margin:0}
+.rtext.blur{filter:blur(9px);user-select:none}
+.beads{display:flex;gap:7px;flex-wrap:wrap}.beads i{width:20px;height:20px;border-radius:50%;background:var(--soft);border:1.5px solid var(--line)}.beads i.on{background:var(--green);border-color:var(--green)}
+.rcnt{font-weight:800;color:var(--muted);font-size:14px}
+.rfoot{padding:10px 18px calc(16px + env(safe-area-inset-bottom,0px));max-width:720px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.rfoot .btn{min-height:56px;font-size:17px}
+.rnum{width:32px;height:32px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+.rpray{padding:16px 18px}.rpray h3{margin:0 0 6px;font-family:var(--display);font-size:20px}.rpray p{margin:0;line-height:1.55}
+@media (min-width:900px){.main>.rosbtn{grid-column:1/-1}.rtext{font-size:26px}}
 </style>
 </head>
 <body>
@@ -473,7 +499,7 @@ const SUGGEST=[
 const KEY='minha-rotina-v2';
 function defConfig(){return{name:'',setupDone:false,habits:[],plans:[],
   bonus:{dia100:20,meta:25,semana:100,seq7:50,seq30:200,grupo:30},
-  rate:20,justLimit:3,modules:{premios:true,gastos:true,filmes:true,livros:true,compras:true,tarefas:true},categories:DEFAULT_CATS.slice(),recurring:[],wishes:[],movies:[],books:[],shopping:[],avoids:[],tasks:[],dates:[],pauses:{},closeDay:0,lastPay:'',tmdbKey:'',theme:'auto'};}
+  rate:20,justLimit:3,modules:{premios:true,gastos:true,filmes:true,livros:true,compras:true,tarefas:true,terco:true},categories:DEFAULT_CATS.slice(),recurring:[],wishes:[],movies:[],books:[],shopping:[],avoids:[],tasks:[],dates:[],pauses:{},closeDay:0,lastPay:'',tmdbKey:'',theme:'auto'};}
 function defData(){return{start:todayKey(),days:{},planOff:{},names:{},expenses:[],recLast:{},redeemed:[],seen:[],lastBackup:null};}
 function normHabit(h){const d=D({});h=Object.assign({},d,h||{});h.freq=Object.assign({},d.freq,h.freq||{});if(!Array.isArray(h.freq.days))h.freq.days=[0,1,2,3,4];if(!Array.isArray(h.steps)||h.steps.length<2)h.steps=[250,500];if(!h.id)h.id=uid();h.archived=!!h.archived;if(h.type==='plan'||h.type==='qty'){if(h.freq.kind==='weekly')h.freq.kind='daily';}return h;}
 function normConfig(c){const d=defConfig();c=c&&typeof c==='object'?c:{};return{...d,...c,habits:(Array.isArray(c.habits)?c.habits:[]).map(normHabit),plans:Array.isArray(c.plans)?c.plans.filter(p=>p&&Array.isArray(p.items)):[],
@@ -670,6 +696,7 @@ function viewHoje(c){
   const gp=(PZ['*']||[]).find(p=>p.from<=k&&(!p.to||k<=p.to));
   if(gp)h+='<div class="banner pausebn"><span class="row" style="gap:10px">'+ic('pause',20)+'<span>Rotina em pausa'+(gp.to?' até '+fmtShort(gp.to):'')+'. Nada conta como falha.</span></span><button class="btn sm ghost" data-a="pauseEnd" data-id="*">Retomar</button></div>';
   if(isT)h+=countStrip(T);
+  if(isT&&C().modules.terco!==false){const rs=rosToday();h+='<button class="rosbtn" data-a="rosOpen"><span class="tile">'+ic('cross',22)+'</span><span class="col"><b>Rezar o terço</b><span class="s">Mistérios '+MYST[rs][0]+' · hoje</span></span>'+ic('right',20)+'</button>';}
   const hp=gp?[]:active().filter(x=>inPause(PZ[x.id],k));
   if(hp.length)h+='<div class="pzrow">'+hp.map(x=>{const p=PZ[x.id].find(q=>q.from<=k&&(!q.to||k<=q.to));return'<button class="pzchip" data-a="pauseEnd" data-id="'+x.id+'">'+ic('pause',16)+'<span>'+esc(x.name)+(p.to?' · até '+fmtShort(p.to):'')+'</span><b>Retomar</b></button>';}).join('')+'</div>';
   if(!active().length)return h+'<div class="card empty"><p style="margin:0 0 12px">Sua rotina está vazia.</p><button class="btn green" data-a="setupAgain">Montar minha rotina</button></div></main>';
@@ -1135,7 +1162,7 @@ function viewAjustes(){
     '<label for="s-name">Seu nome</label><input id="s-name" class="input" data-set="name" data-str="1" value="'+esc(C().name)+'" style="text-align:left">'+
     '<label for="s-just">Justificados por mês</label><input id="s-just" class="input" type="number" inputmode="numeric" min="0" max="31" data-set="justLimit" value="'+C().justLimit+'">'+
     (pts()?'<label for="s-rate">Pontos por real</label><input id="s-rate" class="input" type="number" inputmode="numeric" min="1" data-set="rate" value="'+C().rate+'">':'')+(C().modules.gastos?'<label for="s-close">Dia em que a fatura do cartão fecha (0 = não usar)</label><input id="s-close" class="input" type="number" inputmode="numeric" min="0" max="31" data-set="closeDay" value="'+(C().closeDay||0)+'">':'')+'</div>'+
-    '<span class="flabel">Seções do app</span><div class="chips"><button class="chipbtn" data-a="mod" data-v="premios" aria-pressed="'+C().modules.premios+'">Pontos e prêmios</button><button class="chipbtn" data-a="mod" data-v="gastos" aria-pressed="'+C().modules.gastos+'">Gastos</button><button class="chipbtn" data-a="mod" data-v="filmes" aria-pressed="'+C().modules.filmes+'">Filmes</button><button class="chipbtn" data-a="mod" data-v="livros" aria-pressed="'+C().modules.livros+'">Livros</button><button class="chipbtn" data-a="mod" data-v="compras" aria-pressed="'+C().modules.compras+'">Lista de compras</button><button class="chipbtn" data-a="mod" data-v="tarefas" aria-pressed="'+C().modules.tarefas+'">A fazer e datas</button></div></section>';
+    '<span class="flabel">Seções do app</span><div class="chips"><button class="chipbtn" data-a="mod" data-v="premios" aria-pressed="'+C().modules.premios+'">Pontos e prêmios</button><button class="chipbtn" data-a="mod" data-v="gastos" aria-pressed="'+C().modules.gastos+'">Gastos</button><button class="chipbtn" data-a="mod" data-v="filmes" aria-pressed="'+C().modules.filmes+'">Filmes</button><button class="chipbtn" data-a="mod" data-v="livros" aria-pressed="'+C().modules.livros+'">Livros</button><button class="chipbtn" data-a="mod" data-v="compras" aria-pressed="'+C().modules.compras+'">Lista de compras</button><button class="chipbtn" data-a="mod" data-v="tarefas" aria-pressed="'+C().modules.tarefas+'">A fazer e datas</button><button class="chipbtn" data-a="mod" data-v="terco" aria-pressed="'+(C().modules.terco!==false)+'">Terço</button></div></section>';
   if(pts())h+='<details class="card"><summary>Pontos de bônus'+ic('right',18)+'</summary><div class="setgrid">'+
     [['dia100','Dia 100%'],['meta','Meta semanal batida'],['semana','Semana perfeita'],['seq7','7 dias 100% seguidos'],['seq30','30 dias 100% seguidos'],['grupo','Etapa de plano concluída']].map(([k,n])=>'<label for="b-'+k+'">'+n+'</label><input id="b-'+k+'" class="input" type="number" inputmode="numeric" min="0" data-set="bonus.'+k+'" value="'+B[k]+'">').join('')+'</div><span class="small">Os pontos de cada hábito ficam na edição do hábito.</span></details>';
   if(C().modules.gastos)h+='<details class="card"><summary>Categorias de gastos'+ic('right',18)+'</summary><div class="col" style="gap:0">'+C().categories.map(ct=>'<div class="list-item"><span style="flex:1;font-weight:700">'+esc(ct)+'</span><button class="iconbtn light" style="width:40px;height:40px" data-a="catDel" data-v="'+esc(ct)+'" aria-label="Remover '+esc(ct)+'">'+ic('x',18)+'</button></div>').join('')+
@@ -1326,6 +1353,71 @@ function tabs(){const t=[['hoje','Hoje','cal']];if(listsOn().length)t.push(['lis
 function applySky(){const d=new Date(),h=d.getHours()+d.getMinutes()/60,R=document.documentElement;
   const sky=h<5||h>=21?'night':h<11?'morning':h<17?'afternoon':'evening';if(R.dataset.sky!==sky)R.dataset.sky=sky;
   const t=Math.min(1,Math.max(0,(h-5)/16));R.style.setProperty('--sunx',(sky==='night'?82:8+t*84).toFixed(0)+'%');R.style.setProperty('--suny',(sky==='night'?18:30-Math.sin(t*Math.PI)*36).toFixed(0)+'%');}
+/* ---------- terço ---------- */
+const PRAYERS={
+ cruz:['Sinal da Cruz','Pelo sinal da Santa Cruz, livrai-nos Deus, nosso Senhor, dos nossos inimigos.<br>Em nome do Pai, do Filho e do Espírito Santo. Amém.'],
+ creio:['Creio (Profissão de Fé)','Creio em Deus Pai todo-poderoso, criador do céu e da terra; e em Jesus Cristo, seu único Filho, nosso Senhor, que foi concebido pelo poder do Espírito Santo; nasceu da Virgem Maria; padeceu sob Pôncio Pilatos, foi crucificado, morto e sepultado; desceu à mansão dos mortos; ressuscitou ao terceiro dia; subiu aos céus, está sentado à direita de Deus Pai todo-poderoso, donde há de vir a julgar os vivos e os mortos.<br><br>Creio no Espírito Santo, na santa Igreja Católica, na comunhão dos santos, na remissão dos pecados, na ressurreição da carne, na vida eterna. Amém.'],
+ pai:['Pai-Nosso','Pai nosso que estais nos céus, santificado seja o vosso nome, venha a nós o vosso reino, seja feita a vossa vontade assim na terra como no céu.<br><br>O pão nosso de cada dia nos dai hoje, perdoai-nos as nossas ofensas assim como nós perdoamos a quem nos tem ofendido, e não nos deixeis cair em tentação, mas livrai-nos do mal. Amém.'],
+ ave:['Ave-Maria','Ave, Maria, cheia de graça, o Senhor é convosco, bendita sois vós entre as mulheres e bendito é o fruto do vosso ventre, Jesus.<br><br>Santa Maria, Mãe de Deus, rogai por nós, pecadores, agora e na hora da nossa morte. Amém.'],
+ gloria:['Glória ao Pai','Glória ao Pai, ao Filho e ao Espírito Santo, como era no princípio, agora e sempre. Amém.'],
+ jacul:['Jaculatória de Fátima','Ó meu Jesus, perdoai-nos, livrai-nos do fogo do inferno, levai as almas todas para o céu e socorrei principalmente as que mais precisarem.'],
+ salve:['Salve Rainha','Salve, Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve!<br>A vós bradamos, os degredados filhos de Eva; a vós suspiramos, gemendo e chorando neste vale de lágrimas.<br>Eia, pois, advogada nossa, esses vossos olhos misericordiosos a nós volvei; e depois deste desterro mostrai-nos Jesus, bendito fruto do vosso ventre, ó clemente, ó piedosa, ó doce sempre Virgem Maria.<br><br>Rogai por nós, Santa Mãe de Deus,<br>para que sejamos dignos das promessas de Cristo. Amém.']};
+const MYST={
+ go:['Gozosos','Alegria da vinda de Jesus',[
+  ['A Anunciação do Anjo a Maria','Lc 1,26-38','O anjo anuncia a Maria que ela será mãe de Jesus, e ela responde “sim”. Peça um coração humilde, que diz “faça-se” a Deus.'],
+  ['A Visita de Maria a Isabel','Lc 1,39-56','Maria vai depressa ajudar a prima Isabel. Peça a caridade de servir quem precisa de você.'],
+  ['O Nascimento de Jesus em Belém','Lc 2,1-20','Deus nasce pobre, numa manjedoura. Peça o desapego das coisas e o amor aos simples.'],
+  ['A Apresentação de Jesus no Templo','Lc 2,22-38','Maria e José oferecem Jesus a Deus. Peça a graça de entregar a sua vida e a sua família a Ele.'],
+  ['A Perda e o Encontro de Jesus no Templo','Lc 2,41-52','Maria e José procuram o Menino por três dias e o encontram na casa do Pai. Peça para sempre buscar Jesus, mesmo nas dificuldades.']]],
+ lu:['Luminosos','A luz de Jesus no Evangelho',[
+  ['O Batismo de Jesus no Jordão','Mt 3,13-17','O Pai diz: “Este é o meu Filho amado”. Peça a graça de viver como filho de Deus, fiel ao seu batismo.'],
+  ['A Revelação de Jesus nas Bodas de Caná','Jo 2,1-12','Maria diz: “Fazei o que Ele vos disser”. Peça confiança na intercessão de Maria e obediência a Jesus.'],
+  ['O Anúncio do Reino e o convite à conversão','Mc 1,14-15','Jesus chama: “Convertei-vos e crede no Evangelho”. Peça um coração sempre disposto a recomeçar.'],
+  ['A Transfiguração do Senhor','Lc 9,28-36','Jesus mostra a sua glória no monte. Peça o desejo de escutá-lo e de ser transformado por Ele.'],
+  ['A Instituição da Eucaristia','Lc 22,14-20','Jesus se dá a nós no pão e no vinho. Peça amor e respeito pela Santa Missa e pela Comunhão.']]],
+ do:['Dolorosos','A paixão de Jesus',[
+  ['A Agonia de Jesus no Horto das Oliveiras','Mt 26,36-46','Jesus reza com angústia: “Seja feita a tua vontade”. Peça força para aceitar a vontade de Deus nas provações.'],
+  ['A Flagelação de Jesus','Jo 19,1','Jesus é açoitado por nós. Peça a graça de vencer os pecados da carne e de aceitar os sofrimentos com amor.'],
+  ['A Coroação de Espinhos','Mt 27,27-31','Zombam de Jesus e o coroam de espinhos. Peça paciência diante das humilhações e das ofensas.'],
+  ['Jesus carrega a Cruz a caminho do Calvário','Jo 19,17','Jesus leva a cruz por amor. Peça coragem para carregar a sua cruz de cada dia.'],
+  ['A Crucifixão e Morte de Jesus','Lc 23,33-46','Jesus morre perdoando: “Pai, em tuas mãos entrego o meu espírito”. Peça a graça do perdão e de uma boa morte.']]],
+ gl:['Gloriosos','A vitória de Jesus e de Maria',[
+  ['A Ressurreição de Jesus','Mt 28,1-10','Jesus vence a morte e vive. Peça a fé firme na ressurreição e a alegria cristã.'],
+  ['A Ascensão de Jesus ao Céu','At 1,6-11','Jesus sobe ao Pai e promete estar conosco. Peça a esperança do Céu e o desejo de chegar lá.'],
+  ['A Vinda do Espírito Santo sobre os Apóstolos','At 2,1-13','O Espírito Santo desce sobre Maria e os apóstolos. Peça os dons do Espírito e o zelo de testemunhar Jesus.'],
+  ['A Assunção de Maria ao Céu','Ap 12,1','Maria é levada ao Céu em corpo e alma. Peça a graça de viver para o Céu, com a ajuda de Maria.'],
+  ['A Coroação de Maria como Rainha do Céu e da Terra','Ap 12,1','Maria é coroada Rainha, nossa Mãe e intercessora. Peça a sua proteção e a graça da perseverança.']]]};
+const ROSDAY=['gl','go','do','gl','lu','do','go'],DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+const rosToday=()=>ROSDAY[parse(todayKey()).getDay()];
+function rosSteps(set){const M=MYST[set][2],S=[];
+  S.push({p:'cruz',ph:'Início'},{p:'creio',ph:'Início'},{p:'pai',ph:'Início',sub:'Na primeira conta grande'});
+  ['Pela fé','Pela esperança','Pela caridade'].forEach((t,j)=>S.push({p:'ave',ph:'Início',sub:t,beads:[j+1,3]}));
+  S.push({p:'gloria',ph:'Início'});
+  M.forEach((m,mi)=>{const ph='Mistério '+(mi+1)+' de 5 · '+MYST[set][0];
+    S.push({head:1,mi,ph,title:(mi+1)+'º Mistério',name:m[0],ref:m[1],med:m[2]});
+    S.push({p:'pai',ph,mi});
+    for(let j=1;j<=10;j++)S.push({p:'ave',ph,mi,beads:[j,10]});
+    S.push({p:'gloria',ph,mi},{p:'jacul',ph,mi});});
+  S.push({p:'salve',ph:'Final'},{p:'cruz',ph:'Final'});return S;}
+function rosHtml(){const R=ui.ros;if(!R)return'';
+  const top=(t,back)=>'<div class="rtop">'+(back?'<button class="iconbtn light" data-a="'+back+'" aria-label="Voltar">'+ic('left',22)+'</button>':'<span></span>')+'<span class="rt">'+t+'</span><button class="iconbtn light" data-a="rosClose" aria-label="Fechar">'+ic('x',22)+'</button></div>';
+  if(R.view==='orac')return'<div class="rosary" role="dialog" aria-label="Orações">'+top('Orações','rosBack')+'<div class="rbody">'+Object.keys(PRAYERS).map(k=>'<div class="card tight rpray"><h3>'+PRAYERS[k][0]+'</h3><p>'+PRAYERS[k][1]+'</p></div>').join('')+'</div></div>';
+  if(R.view==='start'){const M=MYST[R.set],hoje=R.set===rosToday();
+    return'<div class="rosary" role="dialog" aria-label="Terço">'+top('Rezar o terço')+'<div class="rbody"><h1 class="rh">Mistérios '+M[0]+'</h1><p class="rsub">'+(hoje?'Os de hoje, '+DIAS[parse(todayKey()).getDay()]+'. ':'')+M[1]+'.</p>'+
+      '<div class="chips">'+Object.keys(MYST).map(k=>'<button class="chipbtn" data-a="rosSet" data-v="'+k+'" aria-pressed="'+(R.set===k)+'">'+MYST[k][0]+(k===rosToday()?' · hoje':'')+'</button>').join('')+'</div>'+
+      '<div class="card tight">'+M[2].map((m,i)=>'<div class="list-item" style="align-items:flex-start"><span class="rnum">'+(i+1)+'</span><div class="col" style="gap:2px;min-width:0"><b>'+m[0]+'</b><span class="small">'+m[1]+'</span></div></div>').join('')+'</div>'+
+      '<button class="btn green full" data-a="rosStart">Começar</button><button class="btn soft full" data-a="rosOrac">Ver as orações</button></div></div>';}
+  const S=rosSteps(R.set),st=S[R.i],last=R.i>=S.length-1,pr=st.p?PRAYERS[st.p]:null,pct=R.i/(S.length-1)*100;
+  let b='<div class="rstep"><div class="rph">'+st.ph+'</div>';
+  if(st.head)b+='<h1 class="rh">'+st.title+'</h1><h2 class="rname">'+st.name+'</h2><span class="rref">'+st.ref+'</span><p class="rmed">'+st.med+'</p>';
+  else{b+='<h1 class="rh">'+pr[0]+'</h1>'+(st.sub?'<span class="rref">'+st.sub+'</span>':'');
+    if(st.beads)b+='<div class="beads" aria-label="Ave-Maria '+st.beads[0]+' de '+st.beads[1]+'">'+Array.from({length:st.beads[1]},(_,n)=>'<i class="'+(n<st.beads[0]?'on':'')+'"></i>').join('')+'</div><div class="rcnt">'+st.beads[0]+' de '+st.beads[1]+'</div>';
+    b+='<p class="rtext'+(R.hide&&!R.peek?' blur':'')+'">'+pr[1]+'</p>';}
+  b+='</div>';
+  return'<div class="rosary" role="dialog" aria-label="Terço">'+top('Terço','rosBack')+'<div class="rprog"><i style="width:'+pct+'%"></i></div><div class="rbody mid">'+b+'</div>'+
+    '<div class="rfoot"><div class="row" style="justify-content:center;gap:8px;flex-wrap:wrap">'+(st.head?'':'<button class="chipbtn" data-a="rosHide" aria-pressed="'+!!R.hide+'">Esconder o texto</button>'+(R.hide?'<button class="chipbtn" data-a="rosPeek" aria-pressed="'+!!R.peek+'">Espiar</button>':''))+'</div>'+
+    '<div class="row"><button class="btn ghost" style="flex:1" data-a="rosPrev"'+(R.i===0?' disabled':'')+'>Voltar</button><button class="btn green" style="flex:2" data-a="rosNext">'+(last?'Concluir':'Próxima')+'</button></div></div></div>';}
+async function rosWake(on){try{if(on){if(navigator.wakeLock&&!ui.wl)ui.wl=await navigator.wakeLock.request('screen');}else if(ui.wl){await ui.wl.release();ui.wl=null;}}catch(e){ui.wl=null;}}
 function render(){
   applySky();
   const app=document.getElementById('app');
@@ -1340,6 +1432,7 @@ function render(){
   app.innerHTML=v+'<nav class="tabs" aria-label="Seções"><div class="brand"><i>'+ic('cal',22)+'</i>Minha Rotina</div><div class="in'+(t.length>6?' scroll':'')+'" style="grid-template-columns:repeat('+t.length+',minmax(0,1fr))">'+t.map(([k,n,i])=>'<button data-a="tab" data-v="'+k+'" '+(ui.tab===k?'aria-current="page"':'')+'>'+ic(i,24)+n+'</button>').join('')+'</div></nav>'+sheetHtml();
   if(ui.pop){const el=app.querySelector('.check.on[data-id="'+ui.pop+'"]');if(el)el.classList.add('pop');ui.pop=null;}
   const nv=app.querySelector('nav.tabs .in.scroll');if(nv){const a=nv.querySelector('[aria-current]');if(a)nv.scrollLeft=a.offsetLeft-nv.clientWidth/2+a.offsetWidth/2;}
+  if(ui.ros)app.insertAdjacentHTML('beforeend',rosHtml());
   checkAch(c);
 }
 function applyTheme(){const t=C().theme||'auto';if(t==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t);}
@@ -1482,6 +1575,16 @@ document.addEventListener('click',e=>{
     case'period':{const def=(ui.sel!==T||v===curPeriod()||v==='any'),cur=ui.pOpen[v]!==undefined?ui.pOpen[v]:def;ui.pOpen[v]=!cur;render();break;}
     case'ePeriod':ui.edit.period=v;render();break;
     case'tsub':ui.tsub=v;render();break;
+    case'rosOpen':ui.ros={view:'start',set:rosToday(),i:0,hide:false,peek:false};render();rosWake(true);break;
+    case'rosSet':ui.ros.set=v;render();break;
+    case'rosStart':ui.ros.view='step';ui.ros.i=0;ui.ros.peek=false;render();try{document.querySelector('.rosary .rbody').scrollTop=0;}catch(_){}break;
+    case'rosOrac':ui.ros.prev=ui.ros.view;ui.ros.view='orac';render();break;
+    case'rosBack':{const R=ui.ros;if(R.view==='orac')R.view=R.prev||'start';else if(R.view==='step'&&R.i>0){R.i--;R.peek=false;}else R.view='start';render();break;}
+    case'rosPrev':{const R=ui.ros;if(R.i>0){R.i--;R.peek=false;}render();break;}
+    case'rosNext':{const R=ui.ros,n=rosSteps(R.set).length;if(R.i>=n-1){ui.ros=null;rosWake(false);render();toast('Terço concluído. Deus te abençoe!');}else{R.i++;R.peek=false;render();try{document.querySelector('.rosary .rbody').scrollTop=0;}catch(_){}}break;}
+    case'rosHide':ui.ros.hide=!ui.ros.hide;ui.ros.peek=false;render();break;
+    case'rosPeek':ui.ros.peek=!ui.ros.peek;render();break;
+    case'rosClose':ui.ros=null;rosWake(false);render();break;
     case'goTasks':ui.tab='listas';ui.list='tarefas';ui.tsub='tarefas';render();try{window.scrollTo(0,0);}catch(_){}break;
     case'goDates':ui.tab='listas';ui.list='tarefas';ui.tsub='datas';render();try{window.scrollTo(0,0);}catch(_){}break;
     case'tkWhen':ui.tk.date=v==='today'?T:v==='tomorrow'?addDays(T,1):'';render();break;
@@ -1608,7 +1711,7 @@ document.addEventListener('click',e=>{
     case'copyBk':{const ta=document.getElementById('bk');try{navigator.clipboard.writeText(ta.value).then(()=>toast('Copiado'),()=>{ta.select();toast('Selecione e copie o texto');});}catch(er){ta.select();toast('Selecione e copie o texto');}break;}
     case'pasteOpen':ui.sheet={type:'paste'};render();break;
     case'pasteDo':{const ta=document.getElementById('pasteBk');tryRestore(ta?ta.value:'');break;}
-    case'mod':C().modules[v]=!C().modules[v];save();render();break;
+    case'mod':C().modules[v]=v==='terco'?C().modules[v]===false:!C().modules[v];save();render();break;
     case'catAdd':{const inp=document.getElementById('newCat');const n=(inp&&inp.value||'').trim();if(!n)break;if(C().categories.includes(n)){toast('Essa categoria já existe');break;}C().categories.push(n);save();render();break;}
     case'catDel':if(C().categories.length>1){C().categories=C().categories.filter(x=>x!==v);if(ui.draft.cat===v)ui.draft.cat=null;save();render();}break;
     case'theme':C().theme=v;save();applyTheme();render();break;
