@@ -1,0 +1,30 @@
+rules_version = '2';
+// Regras do Firestore do Minha Rotina.
+// Cada pessoa só lê e grava os próprios dados, em users/{uid}/st/{documento}.
+// Todo o resto do banco fica fechado.
+//
+// Para aplicar: Firebase Console > Firestore Database > Regras > colar este conteúdo > Publicar.
+// Se quiser que só a sua conta Google use o app, troque a função "dono" pela versão comentada
+// abaixo, com o seu e-mail.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function dono(uid) {
+      return request.auth != null && request.auth.uid == uid;
+      // return request.auth != null && request.auth.uid == uid
+      //   && request.auth.token.email == 'SEU-EMAIL@gmail.com'
+      //   && request.auth.token.email_verified == true;
+    }
+
+    match /users/{uid}/st/{doc} {
+      allow read, delete: if dono(uid);
+      // Cada documento guarda o texto em "j" e a hora em "at".
+      allow create, update: if dono(uid)
+        && request.resource.data.keys().hasOnly(['j', 'at'])
+        && request.resource.data.j is string;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 /* Service worker do Minha Rotina: rede primeiro (para sempre pegar a versão nova), cache como reserva offline. */
-const V = 'minha-rotina-v7';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const V = 'minha-rotina-v8';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(ASSETS).catch(() => {})).then(() => self.skipWaiting()));
@@ -27,5 +27,16 @@ self.addEventListener('fetch', e => {
         return res;
       })
       .catch(() => caches.match(r).then(m => m || caches.match('./index.html')))
+  );
+});
+
+/* Toque numa notificação de lembrete: volta para o app aberto ou abre um novo. */
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      for (const c of list) { if ('focus' in c) return c.focus(); }
+      return self.clients.openWindow ? self.clients.openWindow('./') : null;
+    })
   );
 });
